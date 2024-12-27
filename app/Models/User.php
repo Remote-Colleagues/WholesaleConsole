@@ -21,7 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-    ];
+        'user_type',
+        'status',
+        ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,4 +47,39 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function isAdmin()
+    {
+        return $this->user_type === 'admin';
+    }
+
+    /**
+     * Check if the user is a partner.
+     *
+     * @return bool
+     */
+    public function isPartner()
+    {
+        return $this->user_type === 'partner';
+    }
+
+    /**
+     * Check if the user is a consoler.
+     *
+     * @return bool
+     */
+    public function isConsoler()
+    {
+        return $this->user_type === 'consoler';
+    }
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+public function consoler()
+{
+    return $this->hasOne(Consoler::class);
+}
+
+
 }
