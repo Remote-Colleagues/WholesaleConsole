@@ -5,6 +5,10 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Models\Auctions;
+
+
 
 class AdminController extends Controller
 {
@@ -36,28 +40,7 @@ class AdminController extends Controller
     return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
 }
 
-    public function showLoginForm()
-    {
-        return view('admin.login');
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:6',
-        ]);
-
-        $admin = Admin::where('contact_email', $request->email)->first();
-
-        if ($admin && Hash::check($request->password, $admin->change_password)) {
-            session(['admin' => $admin]);
-
-            return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
-        }
-
-        return back()->with('error', 'Invalid email or password.');
-    }
+   
 
     public function dashboard()
     {
@@ -65,12 +48,22 @@ class AdminController extends Controller
             return view('admin.dashboard');
         }
 
-        return redirect()->route('admin.login.form')->with('error', 'You must be logged in to access the dashboard');
+        return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
     }
 
-    public function logout()
+
+    public function consolerList()
     {
-        session()->forget('admin');
-        return redirect()->route('admin.login.form')->with('success', 'Logged out successfully.');
+        $consolers = User::where('user_type', 'consoler')->get();
+
+        return view('admin.consolerlist', compact('consolers'));
     }
+
+
+public function showAllAuctions()
+{
+    $auctions = Auctions::paginate(8);
+
+    return view('auctions.index', compact('auctions'));
+}
 }

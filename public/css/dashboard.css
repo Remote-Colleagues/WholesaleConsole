@@ -1,96 +1,70 @@
-/* Global styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Custom styles for logout button */
+.logout-btn {
+    background-color: #e74c3c;  /* Red color for Logout */
+    color: white;               /* White text color */
+    border-radius: 25px;        /* Round shape (adjust as needed) */
+    padding: 10px 20px;         /* Padding for better appearance */
+    border: none;               /* Remove default border */
+    display: flex;
+    align-items: center;        /* Vertically center the content */
+    text-decoration: none;      /* Remove underline */
+    width: 100%;                /* Optional: make the button fill its parent */
+    box-sizing: border-box;     /* Include padding in width calculation */
+}
+
+/* Hover effect for logout button */
+.logout-btn:hover {
+    background-color: #c0392b;  /* Darker red on hover */
+    text-decoration: none;      /* Remove underline on hover */
+}
+
+/* Optional: Icon style for the logout button */
+.logout-btn i {
+    margin-right: 10px;         /* Space between icon and text */
+}
+
+/* Green header background */
+.bg-green {
+    background-color: #28a745 !important; /* Green color */
+}
+
+/* Ensure dropdown stays in place */
+.fixed-dropdown {
+    position: fixed;
+    top: 60px;  /* Adjust to keep it below the top bar */
+    right: 0;
+    width: 250px; /* Adjust width as necessary */
+    z-index: 1050; /* Make sure the dropdown stays above other content */
+}
+
+/* Optional: Improve dropdown styling */
+.dropdown-menu {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: Change text color of dropdown items */
+.dropdown-item {
+    color: #333; /* Default text color */
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1; /* Hover effect */
+    color: #000; /* Dark text on hover */
+}
+
+/* Adjust the navbar text color */
+.navbar-nav .nav-link, .navbar-nav .nav-item {
+    color: white; /* Make text white in the navbar */
+}
+
+/* Adjust profile image */
+.img-profile {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    min-height: 100vh; /* Ensure full height */
-    flex-direction: column;
-}
-
-.dashboard-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    min-height: 100vh;
-    margin-top: 80px; /* Space for fixed header */
-}
-
-/* Header Styles (Fixed on top) */
-.header {
-    background-color: green;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    height: 80px;
-}
-
-.header h1 {
-    margin: 0;
-}
-
-/* Sidebar Styles */
-.sidebar {
-    width: 250px;
-    background-image: url('https://via.placeholder.com/250'); /* Replace with your background image */
-    background-size: cover;
-    height: calc(100vh - 80px); /* Full height minus header height */
-    padding: 20px;
-    position: fixed;
-    top: 80px; /* Adjust to avoid overlap with the header */
-    left: 0;
-}
-
-.sidebar-menu ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar-menu li {
-    margin-bottom: 15px;
-}
-
-.sidebar-menu li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.sidebar-menu li a:hover {
-    text-decoration: underline;
-}
-
-/* Middle Section Styles */
-.middle-section {
-    padding: 20px;
-    margin-left: 250px; /* Make space for the sidebar */
-    width: calc(100% - 250px); /* Ensure middle section takes remaining space */
-    height: calc(100vh - 80px); /* Full height minus header height */
-    overflow-y: auto; /* Enable vertical scrolling */
-    background-color: #fff;
-}
-
-/* Form and Button Styles */
-form button {
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-}
-
-form button:hover {
-    background-color: darkgreen;
+    font-family: 'Roboto', sans-serif;
 }
