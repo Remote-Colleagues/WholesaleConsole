@@ -12,8 +12,8 @@
 <body>
 <div class="middle-section">
     <div class="container mt-5">
-        <h1>Add Consoler</h1>
-
+        <h2 style="pointer-events: none; user-select: none;">Add Consoler</h2>
+        <!-- <div class="overflow-auto border p-3 rounded" style="max-height: 80vh;">  -->
         <form method="POST" action="{{ route('consolers.store') }}" enctype="multipart/form-data">
             @csrf
 
@@ -47,9 +47,6 @@
              <!-- Status -->
             <input type="hidden" name="status" value="active">
 
-            <!-- Consoler Fields -->
-            <h3>Consoler Details</h3>
-
             <!-- Console Name -->
             <div class="mb-3 d-flex">
                 <label for="console_name" class="form-label col-sm-3">Console Name <span class="text-danger">*</span></label>
@@ -70,13 +67,13 @@
 
             <!-- ABN Number -->
             <div class="mb-3 d-flex">
-                <label for="abn_number" class="form-label col-sm-3">ABN Number <span class="text-danger">*</span></label>
-                <input type="text" class="form-control form-control-sm col-sm-3" id="abn_number" name="abn_number" required>
+                <label for="abn_number" class="form-label col-sm-3">ABN <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm col-sm-3" id="abn_number" name="abn_number" maxlength="11" required>
             </div>
 
             <!-- Operation Location -->
-            <div class="mb-3 row">
-                <label for="operation_location" class="col-sm-2 col-form-label">Operation Location <span class="text-danger">*</span></label>
+            <div class="mb-3 d-flex row">
+                <label for="operation_location" class="form-label col-sm-3 ">Operation Location <span class="text-danger">*</span></label>
                 <div class="col-sm-3">
                     <input type="text" class="form-control form-control-sm mb-2" id="building" name="building" placeholder="Building, Apt, Unit" required>
                     <input type="text" class="form-control form-control-sm mb-2" id="city" name="city" placeholder="City" required>
@@ -87,56 +84,68 @@
             </div>
 
             <!-- Your Agreement -->
-            <div class="mb-3">
-                <label for="your_agreement" class="form-label">Your Agreement <span class="text-danger">*</span></label>
+            <div class="mb-3 d-flex">
+                <label for="your_agreement" class="form-label col-sm-3">Your Agreement <span class="text-danger">*</span></label>
                 <input type="file" class="form-control form-control-sm col-sm-3" id="your_agreement" name="your_agreement" accept="application/pdf" required>
             </div>
 
             <!-- Billing Commencement Period -->
             <div class="mb-3 d-flex">
-                <label for="billing_commencement_period" class="form-label col-sm-3">Billing Commencement Period <span class="text-danger">*</span></label>
-                <input type="date" class="form-control form-control-sm col-sm-3" id="billing_commencement_period" name="billing_commencement_period" required>
+                <label for="billing_commencement_period" class="form-label col-sm-3">Billing Commencement Period </label>
+                <input type="date" class="form-control form-control-sm col-sm-3" id="billing_commencement_period" name="billing_commencement_period" >
             </div>
 
             <!-- Currency -->
             <div class="mb-3 d-flex">
-                <label for="currency" class="form-label col-sm-3">Currency <span class="text-danger">*</span></label>
+                <label for="currency" class="form-label col-sm-3">Currency </label>
                 <input type="text" class="form-control form-control-sm col-sm-3" id="currency" name="currency" value="AUD" readonly required>
             </div>
 
             <!-- Fees and Charges -->
             <div class="mb-3 d-flex">
-                <label for="establishment_fee" class="form-label col-sm-3">Establishment Fee <span class="text-danger">*</span></label>
-                <input type="number" class="form-control form-control-sm col-sm-3" id="establishment_fee" name="establishment_fee" step="0.01" required>
-                <input type="date" class="form-control form-control-sm col-sm-3" id="establishment_fee_date" name="establishment_fee_date" required>
+                <label for="establishment_fee" class="form-label col-sm-3">Establishment Fee </label>
+                <input type="number" class="form-control form-control-sm col-sm-3" id="establishment_fee" name="establishment_fee" step="0.01" >
+                <input type="date" class="form-control form-control-sm col-sm-3" id="establishment_fee_date" name="establishment_fee_date" readonly>
             </div>
 
             <div class="mb-3 d-flex">
-                <label for="monthly_subscription_fee" class="form-label col-sm-3">Monthly Subscription Fee <span class="text-danger">*</span></label>
-                <input type="number" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee" name="monthly_subscription_fee" step="0.01" required>
-                <input type="date" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee_date" name="monthly_subscription_fee_date" required>
+                <label for="monthly_subscription_fee" class="form-label col-sm-3">Monthly Subscription Fee </label>
+                <input type="number" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee" name="monthly_subscription_fee" step="0.01" >
+                <input type="date" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee_date" name="monthly_subscription_fee_date" readonly>
             </div>
             <div class="mb-3 d-flex">
-                <label for="admin_fee" class="form-label col-sm-3">Admin Fee for BC <span class="text-danger">*</span></label>
-                <input type="number" class="form-control form-control-sm col-sm-3" id="admin_fee" name="admin_fee" step="0.01" required>
-                <input type="date" class="form-control form-control-sm col-sm-3" id="admin_fee_date" name="admin_fee_date" required>
+                <label for="admin_fee" class="form-label col-sm-3">Admin Fee for BC </label>
+                <input type="number" class="form-control form-control-sm col-sm-3" id="admin_fee" name="admin_fee" step="0.01" >
+                <input type="date" class="form-control form-control-sm col-sm-3" id="admin_fee_date" name="admin_fee_date" readonly>
             </div>
 
             <div class="mb-3 d-flex">
-                <label for="comm_charge" class="form-label col-sm-3">Comm Charge for BC <span class="text-danger">*</span></label>
-                <input type="number" class="form-control form-control-sm col-sm-3" id="comm_charge" name="comm_charge" step="0.01" required>
-                <input type="date" class="form-control form-control-sm col-sm-3" id="comm_charge_date" name="comm_charge_date" required>
+                <label for="comm_charge" class="form-label col-sm-3">Comm Charge for BC </label>
+                <input type="number" class="form-control form-control-sm col-sm-3" id="comm_charge" name="comm_charge" step="0.01" >
+                <input type="date" class="form-control form-control-sm col-sm-3" id="comm_charge_date" name="comm_charge_date" readonly>
             </div>
 
             <!-- Buttons -->
             <button type="submit" class="btn btn-success">Save</button>
             <a href="{{ route('consoler.list') }}" class="btn btn-danger">Cancel</a>
         </form>
+        <!-- </div> -->
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("input[type='date']", {
+            dateFormat: "d/m/Y", 
+            defaultDate: "today", 
+        });
+    });
+</script>
 </body>
 @endsection
 </html>

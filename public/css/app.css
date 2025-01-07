@@ -38,15 +38,16 @@ body {
 }
 
 .login-container {
-    background-color: #fff;
-    width: 400px;
+    background-color: #007bff;
+    width: 100%;
+    max-width: 500px;
     padding: 40px;
-    border-radius: 50px; /* Cylinder shape */
+    border-radius: 30px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
-    overflow: hidden;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .login-container:hover {
@@ -59,6 +60,7 @@ h2 {
     font-size: 24px;
     color: #333;
     font-weight: bold;
+    text-align: center;
 }
 label {
     font-size: 16px;
@@ -76,13 +78,19 @@ input {
     font-size: 16px;
     transition: border-color 0.3s ease;
 }
+
 input:focus {
     border-color: #3498db;
     outline: none;
 }
+
+.button-container {
+    text-align: right; /* Align button to the right */
+}
+
 button {
-    width: 100%;
-    padding: 12px;
+    width: auto; /* Adjust to content size */
+    padding: 12px 20px; /* Add horizontal padding */
     background-color: #4CAF50;
     color: white;
     border: none;

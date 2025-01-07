@@ -54,34 +54,12 @@ class Controller
     }
 
 
-    public function showRegistrationForm()
+    public function showPolicy()
     {
-        return view('register');
+        return view('policy');
     }
 
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'user_type' => 'required|in:partner,consoler',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'user_type' => $request->user_type,
-        ]);
-
-        return redirect()->route('admin.dashboard')->with('success', 'Registration successful. Please log in.');
-    }
-
+  
     /**
      * Handle the logout request.
      */

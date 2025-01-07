@@ -1,3 +1,5 @@
+<link href="{{ asset('css/style.css') }}" rel="stylesheet">
+
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
@@ -11,7 +13,7 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Partner -->
-    <li class="nav-item active">
+    <li class="nav-item ">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-users"></i>
             <span>Partner</span>
@@ -34,80 +36,81 @@
 
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('auctions.index') }}">
             <i class="fas fa-fw fa-bullhorn"></i>
-            <span>Promote your listing</span>
+            <span>Cars at Auction</span>
         </a>
     </li>
 
     <!-- Nav Item - Upcoming Event -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-calendar-alt"></i>
             <span>Upcoming Event</span>
         </a>
-    </li>
+    </li> -->
 
     <!-- Nav Item - Promote your event -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-calendar-plus"></i>
             <span>Promote your event</span>
         </a>
-    </li>
+    </li> -->
 
     <!-- Nav Item - Invoices -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-file-invoice"></i>
             <span>Invoices</span>
         </a>
-    </li>
+    </li> -->
 
     <!-- Nav Item - Username -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-user"></i>
             <span>Username</span>
         </a>
-    </li>
+    </li> -->
 
     <!-- Nav Item - Our Profiles -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-users"></i>
             <span>Our Profiles</span>
         </a>
-    </li>
+    </li> -->
 
     <!-- Nav Item - Raise Tickets -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-ticket-alt"></i>
             <span>Raise Tickets</span>
         </a>
-    </li>
+    </li> -->
 
     <!-- Nav Item - Terms and Conditions -->
-    <li class="nav-item">
+    <!-- <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Terms and Conditions</span>
         </a>
-    </li>
+    </li> -->
 
 <!-- Divider -->
 <hr class="sidebar-divider">
 
 <!-- Conditional Login/Logout Button -->
+
 <li class="nav-item">
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="nav-link logout-btn">
-                <i class="fas fa-fw fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
-        </form>   
+    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
+        <i class="fas fa-fw fa-sign-out-alt"></i>
+        <span>Logout</span>
+    </a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 </li>
 
     <!-- Divider -->

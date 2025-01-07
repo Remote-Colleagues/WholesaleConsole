@@ -1,24 +1,19 @@
-@extends('admin.layouts.app') <!-- Ensure the correct layout is extended -->
+@extends('admin.layouts.app') 
 
-@section('content') <!-- Start of the content section -->
+@section('content')
 
-<!-- Begin Page Content -->
 <div class="container-fluid">
 
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Consoler Users</h1>
-
-    <!-- DataTales Example -->
     <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-    <h6 class="m-0 font-weight-bold text-primary">Consoler Users List</h6>
+    <h6 class="m-0 font-weight-bold text-primary" style="pointer-events: none; user-select: none;">Consoler Users List</h6>
     <a href="{{ route('consolers.create') }}" class="btn btn-primary">Add Consoler</a> 
 </div>
 
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                    <thead style="pointer-events: none; user-select: none; background-color:#FFDA4B;">
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
@@ -26,7 +21,7 @@
                             <th>view details</th>
                         </tr>
                     </thead>
-                    <tfoot>
+                    <tfoot style="pointer-events: none; user-select: none;">
                         <tr>
                             <th>Name</th>
                             <th>Email</th>

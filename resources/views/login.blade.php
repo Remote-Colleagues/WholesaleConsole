@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: 'Josefin Sans', sans-serif !important;
+        }
+    </style>
 </head>
 <body>
 @if (session('success'))
@@ -12,24 +19,28 @@
 @elseif (session('error'))
     <div class="message error">{{ session('error') }}</div>
 @endif
-
-<div class="login-container">
+<div>
+<h2 style="pointer-events: none; user-select: none;" >WConsole Login</h2>
+<div class="login-container" style="background-color: #5271FF;">
     <form action="{{ route('login') }}" method="POST">
         @csrf
-        <h2>Login</h2>
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required><br><br>
+        <label for="email" style="color: white;">Email:</label>
+        <input type="email" name="email" id="email"  required><br><br>
 
-        <label for="password">Password:</label>
+        <label for="password"  style="color: white;">Password:</label>
         <input type="password" name="password" id="password" required><br><br>
 
-        <button type="submit">Login</button>
+        <div class="button-container">
+        <button type="submit" style="background-color: #FFDA4B; color:#5271FF">Login</button>
+    </div>
     </form>
-
-    <!-- <p>Don't have an account? <a href="{{ route('register.form') }}">Register here</a></p> -->
-
 </div>
-
+<br>
+<p style="pointer-events: none; user-select: none;">
+    By signing into our portal - You agree to our
+    <a href="{{ route('policy.form') }}" style="pointer-events: auto; text-decoration: underline;">privacy policy</a>
+</p>
+</div>
 </body>
 </html>

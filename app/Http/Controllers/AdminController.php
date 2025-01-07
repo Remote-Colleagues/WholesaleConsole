@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Auctions;
+
 
 
 class AdminController extends Controller
@@ -52,10 +54,16 @@ class AdminController extends Controller
 
     public function consolerList()
     {
-        // Fetch all consoler users
         $consolers = User::where('user_type', 'consoler')->get();
 
-        // Pass consoler users to the view
         return view('admin.consolerlist', compact('consolers'));
     }
+
+
+public function showAllAuctions()
+{
+    $auctions = Auctions::paginate(8);
+
+    return view('auctions.index', compact('auctions'));
+}
 }

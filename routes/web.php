@@ -22,13 +22,12 @@ Route::get('/consolers/create', [ConsolerController::class, 'create'])->name('co
 Route::post('/consolers', [ConsolerController::class, 'store'])->name('consolers.store');
 Route::get('consolers/{id}/details', [ConsolerController::class, 'viewConsolerDetails'])->name('consoler.details');
 Route::get('/consolerslist', [AdminController::class, 'consolerList'])->name('consoler.list');
+Route::get('/auctions', [AdminController::class, 'showAllAuctions'])->name('auctions.index');
 
 
 
 use App\Http\Controllers\Controller;
-Route::get('register', [Controller::class, 'showRegistrationForm'])->name('register.form');
-
-Route::post('register', [Controller::class, 'register'])->name('register');
+Route::get('policy', [Controller::class, 'showPolicy'])->name('policy.form');
 
 Route::get('login', [Controller::class, 'showLoginForm'])->name('login.form');
 

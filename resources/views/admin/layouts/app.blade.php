@@ -6,12 +6,21 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>@yield('title', 'Default Title')</title>
-    <!-- Custom fonts for this template-->
+
+    <!-- Custom fonts for this template -->
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <!-- Custom styles for this template-->
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+
+    <!-- Apply Font Styling Globally -->
+    <style>
+        body{
+            font-family: 'Josefin Sans', sans-serif !important;
+        }
+    </style>
 
     @yield('styles')
 </head>
@@ -26,7 +35,8 @@
             @include('admin.layouts.footer')
         </div>
     </div>
-    <!-- Scroll to Top Button-->
+
+    <!-- Scroll to Top Button -->
     <a class="scroll-to-top rounded" href="#"><i class="fas fa-angle-up"></i></a>
     @yield('scripts')
 </body>
