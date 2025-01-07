@@ -48,7 +48,7 @@
      <!-- Login button -->
      <br><br>
      <p> I have an account
-    <a href="{{ route('admin.login') }}">
+    <a href="{{ route('login') }}">
        <button>Login</button>
     </a></p>
 </body>

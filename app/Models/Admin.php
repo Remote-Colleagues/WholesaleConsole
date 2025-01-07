@@ -18,4 +18,10 @@ class Admin extends Model
         'abn_number',
         'banking_detail',
     ];
+
+    public function admin()
+{
+    return $this->hasOne(Admin::class);
+}
+
 }

@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->float('contact_person')->nullable();
             $table->float('contact_phone_number')->nullable();
-            $table->string('contact_email');
-            $table->string('change_password');
             $table->text('terms_conditions_wc_partners')->nullable();
             $table->text('terms_conditions_wc_consolers')->nullable();
             $table->text('privacy_policy_for_all');

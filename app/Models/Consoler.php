@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,30 +10,26 @@ class Consoler extends Model
     use HasFactory;
 
     protected $fillable = [
-        'wc_consolers_name',
+        'user_id',
+        'console_name',
         'contact_person',
         'contact_phone_number',
-        'contact_email',
-        'password',
-        'your_agreement',
         'abn_number',
-        'operational_location',
-        'comm_charge_for_buyers_connect',
-        'last_changed_comm_charge_for_buyers_connect',
+        'building',
+        'city',
+        'state',
+        'country',
+        'post_code',
+        'your_agreement',
         'billing_commencement_period',
-        'last_changed_billing_commencement_period',
-        'admin_fee_for_buyers_connect',
+        'currency',
         'establishment_fee',
-        'last_changed_establishment_fee',
-        'ongoing_monthly_subs_fee',
-        'last_changed_ongoing_monthly_subs_fee',
-    ];
-
-    protected $casts = [
-        'your_agreement' => 'boolean',
-        'last_changed_comm_charge_for_buyers_connect' => 'datetime',
-        'last_changed_billing_commencement_period' => 'datetime',
-        'last_changed_establishment_fee' => 'datetime',
-        'last_changed_ongoing_monthly_subs_fee' => 'datetime',
+        'establishment_fee_date',
+        'monthly_subscription_fee',
+        'monthly_subscription_fee_date',
+        'admin_fee',
+        'admin_fee_date',
+        'comm_charge',
+        'comm_charge_date',
     ];
 }
