@@ -32,7 +32,6 @@
 
         <!-- Right Side (Third and Fourth Headers) -->
         <div class="d-flex flex-column align-items-end">
-            <!-- Third Header with Links (Normal Text) -->
             @isset($thirdHeader)
                 <div class="mt-0">
                     @foreach ($thirdHeader as $title => $link)
@@ -46,7 +45,6 @@
                 </div>
             @endisset
 
-            <!-- Fourth Header with Links (Normal Text) -->
             @isset($fourthHeader)
                 <div class="mt-0">
                     @foreach ($fourthHeader as $title => $link)
