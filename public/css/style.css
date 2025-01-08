@@ -1,5 +1,5 @@
 #accordionSidebar {
-    background: url('/img/image.png') no-repeat center center;
+    background: url('/img/img.png') no-repeat center center;
     background-size: cover;
     height: auto;  /* Ensures the sidebar stretches vertically to fill the screen */
 }
@@ -10,7 +10,7 @@
 }
 .table {
     border-collapse: 1px;
-    border-spacing:10px; 
+    border-spacing:10px;
 }
 
 table td, table th {
@@ -43,7 +43,7 @@ table td, table th {
     margin: 0 5px;
 }
 
-.pagination-container .pagination li a, 
+.pagination-container .pagination li a,
 .pagination-container .pagination li span {
     width: 35px;
     height: 35px;

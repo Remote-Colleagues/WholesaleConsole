@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-
+@section('headerTitle', 'Consolers details')
 @section('content')
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -7,13 +7,13 @@
     <h1 class="h3 mb-2 text-gray-800" style="pointer-events: none; user-select: none;">Consoler Details</h1>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary pointer-events-none user-select-none">Consoler Details</h6>
+            <h6 class="m-0 font-weight-bold text-primary pointer-events-none user-select-none">{{ $consoler->console_name }}'s Details</h6>
         </div>
         <div class="card-body">
             @if ($consoler)
                 <div class="row">
                     <div class="col-md-4" style="pointer-events: none; user-select: none;">
-                        <p><strong>Console Name:</strong></p>
+                        <p><strong>Consoler Name:</strong></p>
                         <p><strong>Contact Person:</strong></p>
                         <p><strong>Contact Phone Number:</strong></p>
                         <p><strong>ABN Number:</strong></p>
@@ -57,7 +57,7 @@
                 <p>No details available for this Consoler.</p>
             @endif
         </div>
-        
+
         <a href="{{ route('consoler.list') }}" class="btn btn-secondary btn-sm form-label col-sm-1">Back</a>
 
     </div>
