@@ -15,7 +15,7 @@ class AdminController extends Controller
     public function create()
     {
         return view('admin.reg');
-    }    
+    }
     public function store(Request $request)
 {
     $validated = $request->validate([
@@ -40,7 +40,7 @@ class AdminController extends Controller
     return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
 }
 
-   
+
 
     public function dashboard()
     {
@@ -63,7 +63,6 @@ class AdminController extends Controller
 public function showAllAuctions()
 {
     $auctions = Auctions::paginate(8);
-
     return view('auctions.index', compact('auctions'));
 }
 }
