@@ -1,102 +1,83 @@
 @extends('admin.layouts.app')
 @section('headerTitle', 'Car at Auctions')
-@php
-    $secondaryHeader = [
-        'All makes' => ('#'),
-        'All models ' => ('#'),
-        'All body types ' => ('#'),
-        'All build dates ' => ('#'),
-        'Auctions name ' => ('#'),
-    ];
-@endphp
-@php
-    $thirdHeader = [
-        'Reboot' => ('#'),
-        'Add ' => ('#'),
-        'Remove ' => ('#'),
-        'Download ' => ('#'),
-    ];
-@endphp
-@php
-    $itemCount = App\Models\Auctions::totalcount();
-    $fourthHeader = [
-        'Active lists' => ('#'),
-        'Shortlisted ' => ('#'),
-        'port list ' => ('#'),
-        'total:' => $itemCount ,
-    ];
-@endphp
 @section('title', 'Auctions List')
-
-<link href="{{ asset('css/style.css') }}" rel="stylesheet">
 @section('content')
     <div class="container mt-2">
-        <h5 >Cars at Auction</h5>
-        <div class="card-body table-responsive">
-                <table class="table table-borderless" id="dataTable" width="100%" cellspacing="0">
-                    <thead style="pointer-events: none; user-select: none; background-color:#FFDA4B;">
+        <h5>Cars at Auction</h5>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="btn ">Reboot</button>
+                    <button class="btn ">Add</button>
+                    <button class="btn ">Remove</button>
+                    <button class="btn ">Download</button>
+                </div>
+                <div>Total: <span>{{$totalcount}}</span></div>
+            </div>
+
+            <div class="card-body">
+                <!-- Filter Buttons -->
+                <div class="d-flex   card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex " style="gap: 5px;">
+                        <button class="btn btn-outline-primary btn-sm">All Makes<span>&#9654;</span></button>
+                        <button class="btn btn-outline-primary btn-sm">All Model<span>&#9654;</span></button>
+                        <button class="btn btn-outline-primary btn-sm">All Body Type<span>&#9654;</span></button>
+                        <button class="btn btn-outline-primary btn-sm">All Build Date<span>&#9654;</span></button>
+                        <button class="btn btn-outline-primary btn-sm">Auction Name<span>&#9654;</span></button>
+                        <button class="btn btn-outline-primary btn-sm">Location<span>&#9654;</span></button>
+                    </div>
+                    <div class="ms-auto d-flex">
+                        <a class="">Active</a>
+                        <a class="">Shortlisted</a>
+                        <a class="">Past Lists</a>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-borderless">
+                    <thead class="bg-warning">
                         <tr>
+                            <th></th>
                             <th>Name</th>
-                            <th>Make</th>
-                            <th>Model</th>
-                            <th>Build Date</th>
-                            <th>Odometer</th>
-                            <th>Body Type</th>
-                            <th>Fuel</th>
+                            <th>KMs</th>
+                            <th>Type</th>
                             <th>Transmission</th>
-                            <th>Seats</th>
-                            <th>Auctioneer</th>
                             <th>Deadline</th>
-                            <th>Link to Auction</th>
-                            <th>Link to Condition Report</th>
-                            <th>Hours</th>
-                            <th>State</th>
-                            <th>Redbook Code</th>
-                            <th>Redbook Average Wholesale</th>
-                            <th>Current Market Retail</th>
-                            <th>Auction Registration Link</th>
-                            <th>VIN</th>
-                            <th>Date Listed</th>
-                            <th>Name of Auction</th>
+                            <th>Auctioneer</th>
+                            <th>Note_your_Bid</th>
+                            <th>Shortlisted</th>
+                            <th></th>
+
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($auctions as $auction)
                             <tr>
+                                <td><a href="#" class="text-danger">Hide</a>
+                                    <a href="#" class="text-warning">Remove</a>
+                                </td>
                                 <td>{{ $auction->name }}</td>
-                                <td>{{ $auction->make }}</td>
-                                <td>{{ $auction->model }}</td>
-                                <td>{{ $auction->build_date }}</td>
                                 <td>{{ $auction->odometer }}</td>
                                 <td>{{ $auction->body_type }}</td>
-                                <td>{{ $auction->fuel }}</td>
                                 <td>{{ $auction->transmission }}</td>
-                                <td>{{ $auction->seats }}</td>
-                                <td>{{ $auction->auctioneer }}</td>
                                 <td>{{ $auction->deadline }}</td>
-                                <td><a href="{{ $auction->link_to_auction }}" target="_blank">Auction Link</a></td>
-                                <td><a href="{{ $auction->link_to_condition_report }}" target="_blank">Condition Report</a></td>
-                                <td>{{ $auction->hours }}</td>
-                                <td>{{ $auction->state }}</td>
-                                <td>{{ $auction->redbook_code }}</td>
-                                <td>{{ $auction->redbook_average_wholesale }}</td>
-                                <td>{{ $auction->current_market_retail }}</td>
-                                <td><a href="{{ $auction->auction_registration_link }}" target="_blank">Registration Link</a></td>
-                                <td>{{ $auction->vin }}</td>
-                                <td>{{ $auction->date_listed }}</td>
-                                <td>{{ $auction->name_of_auction }}</td>
+                                <td>{{ $auction->auctioneer }}</td>
+                                <td><a href="#" class="text-primary">Edit</a> </td>
+                                <td><a href="#" class="text-success">Shortlist It</a> </td>
+                               <td> <a href="#" class="text-info">Expand for Details</a></td>
+
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center">
-                <div class="pagination-container">
-                    {{ $auctions->onEachSide(2)->links('pagination::bootstrap-5') }}
-                </div>
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-3">
+            <div class="pagination-container">
+                {{ $auctions->onEachSide(2)->links('pagination::bootstrap-5') }}
             </div>
-
+        </div>
     </div>
 @endsection

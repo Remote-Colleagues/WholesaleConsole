@@ -62,7 +62,9 @@ class AdminController extends Controller
 
 public function showAllAuctions()
 {
+    $uniqueMakes = Auctions::select('make')->distinct()->pluck('make');
+    $totalcount=Auctions::count();
     $auctions = Auctions::paginate(8);
-    return view('auctions.index', compact('auctions'));
+    return view('auctions.index', compact('auctions','totalcount','uniqueMakes'));
 }
 }

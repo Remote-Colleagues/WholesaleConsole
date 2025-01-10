@@ -56,7 +56,7 @@
 
             <!-- Console Name -->
             <div class="mb-3 d-flex">
-                <label for="console_name" class="form-label col-sm-3">Console Name <span class="text-danger">*</span></label>
+                <label for="console_name" class="form-label col-sm-3">Consoler Name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-sm col-sm-3" id="console_name" name="console_name" required>
             </div>
 
