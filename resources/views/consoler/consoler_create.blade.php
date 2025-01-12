@@ -1,20 +1,27 @@
-@extends('admin.layouts.app')
 
+@extends('admin.layouts.app')
+@section('headerTitle', 'Add Consoler')
+@section('title','Add consoler')
 @section('content')
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add User</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 <body>
 <div class="middle-section">
-    <div class="container mt-5">
+    <div class="container mt-1">
         <h2 style="pointer-events: none; user-select: none;">Add Consoler</h2>
-        <!-- <div class="overflow-auto border p-3 rounded" style="max-height: 80vh;">  -->
-        <form method="POST" action="{{ route('consolers.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('consolers.store') }}" enctype="multipart/form-data" id="consolerForm">
             @csrf
 
             <!-- Name -->
@@ -32,24 +39,24 @@
             <!-- Password -->
             <div class="mb-3 d-flex">
                 <label for="password" class="form-label col-sm-3">Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control form-control-sm col-sm-3" id="password" name="password" required>
+                <input type="password" class="form-control form-control-sm col-sm-3" id="password" name="password" required oninput="validatePassword()">
             </div>
 
             <!-- Confirm Password -->
             <div class="mb-3 d-flex">
                 <label for="password_confirmation" class="form-label col-sm-3">Confirm Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control form-control-sm col-sm-3" id="password_confirmation" name="password_confirmation" required>
+                <input type="password" class="form-control form-control-sm col-sm-3" id="password_confirmation" name="password_confirmation" required oninput="validatePassword()">
             </div>
+            <div id="passwordError" class="error-message"></div>
 
             <!-- User Type -->
             <input type="hidden" name="user_type" value="consoler">
-
-             <!-- Status -->
+            <!-- Status -->
             <input type="hidden" name="status" value="active">
 
             <!-- Console Name -->
             <div class="mb-3 d-flex">
-                <label for="console_name" class="form-label col-sm-3">Console Name <span class="text-danger">*</span></label>
+                <label for="console_name" class="form-label col-sm-3">Consoler Name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control form-control-sm col-sm-3" id="console_name" name="console_name" required>
             </div>
 
@@ -105,47 +112,62 @@
             <div class="mb-3 d-flex">
                 <label for="establishment_fee" class="form-label col-sm-3">Establishment Fee </label>
                 <input type="number" class="form-control form-control-sm col-sm-3" id="establishment_fee" name="establishment_fee" step="0.01" >
-                <input type="date" class="form-control form-control-sm col-sm-3" id="establishment_fee_date" name="establishment_fee_date" readonly>
+                <input type="date" class="form-control form-control-sm col-sm-3" id="establishment_fee_date" name="establishment_fee_date" >
             </div>
 
             <div class="mb-3 d-flex">
                 <label for="monthly_subscription_fee" class="form-label col-sm-3">Monthly Subscription Fee </label>
                 <input type="number" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee" name="monthly_subscription_fee" step="0.01" >
-                <input type="date" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee_date" name="monthly_subscription_fee_date" readonly>
+                <input type="date" class="form-control form-control-sm col-sm-3" id="monthly_subscription_fee_date" name="monthly_subscription_fee_date" >
             </div>
             <div class="mb-3 d-flex">
                 <label for="admin_fee" class="form-label col-sm-3">Admin Fee for BC </label>
                 <input type="number" class="form-control form-control-sm col-sm-3" id="admin_fee" name="admin_fee" step="0.01" >
-                <input type="date" class="form-control form-control-sm col-sm-3" id="admin_fee_date" name="admin_fee_date" readonly>
+                <input type="date" class="form-control form-control-sm col-sm-3" id="admin_fee_date" name="admin_fee_date" >
             </div>
 
             <div class="mb-3 d-flex">
                 <label for="comm_charge" class="form-label col-sm-3">Comm Charge for BC </label>
                 <input type="number" class="form-control form-control-sm col-sm-3" id="comm_charge" name="comm_charge" step="0.01" >
-                <input type="date" class="form-control form-control-sm col-sm-3" id="comm_charge_date" name="comm_charge_date" readonly>
+                <input type="date" class="form-control form-control-sm col-sm-3" id="comm_charge_date" name="comm_charge_date">
             </div>
 
             <!-- Buttons -->
-            <button type="submit" class="btn btn-success">Save</button>
+            <button type="submit" class="btn btn-success" id="submitBtn" disabled>Save</button>
             <a href="{{ route('consoler.list') }}" class="btn btn-danger">Cancel</a>
         </form>
-        <!-- </div> -->
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        flatpickr("input[type='date']", {
-            dateFormat: "d/m/Y", 
-            defaultDate: "today", 
-        });
-    });
+    function validatePassword() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('password_confirmation').value;
+        const errorMessage = document.getElementById('passwordError');
+        const submitButton = document.getElementById('submitBtn');
+
+        if (password !== confirmPassword) {
+            errorMessage.textContent = "Passwords do not match!";
+            submitButton.disabled = true;
+        } else {
+            errorMessage.textContent = "";
+            submitButton.disabled = false;
+        }
+    }
+
+    document.getElementById('password').addEventListener('input', validatePassword);
+    document.getElementById('password_confirmation').addEventListener('input', validatePassword);
 </script>
+<script>
+    window.onload = () => {
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        document.querySelectorAll('input[type="date"]').forEach(input => input.value = formattedDate);
+    };
+</script>
+
 </body>
 @endsection
 </html>

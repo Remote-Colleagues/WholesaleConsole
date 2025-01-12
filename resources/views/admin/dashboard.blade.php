@@ -1,4 +1,5 @@
 @extends('admin.layouts.app')
+@section('headerTitle', 'Dashboard')
 
 @section('title', 'Dashboard')
 
@@ -67,7 +68,7 @@
             </div>
         </div>
 
-       
+
 <!-- /.container-fluid -->
 @endsection
 
