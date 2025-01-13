@@ -60,11 +60,23 @@ class AdminController extends Controller
     }
 
 
-public function showAllAuctions()
-{
-    $uniqueMakes = Auctions::select('make')->distinct()->pluck('make');
-    $totalcount=Auctions::count();
-    $auctions = Auctions::paginate(8);
-    return view('auctions.index', compact('auctions','totalcount','uniqueMakes'));
-}
+
+    public function showAllAuctions()
+    {
+        $totalcount = Auctions::count(); // Get the total count of auctions
+        $auctions = Auctions::paginate(30); // Paginate auctions to show 8 per page
+
+        // Get unique makes, models, body types, build dates, etc.
+        $makes = Auctions::pluck('make')->unique();
+        $models = Auctions::pluck('model')->unique();
+        $bodyTypes = Auctions::pluck('body_type')->unique();
+        $buildDates = Auctions::pluck('build_date')->unique();
+        $auctionNames = Auctions::pluck('auctioneer')->unique();
+        $locations = Auctions::pluck('state')->unique();
+
+        // Pass the data to the view
+        return view('auctions.index', compact('auctions', 'totalcount', 'models', 'makes', 'bodyTypes', 'buildDates', 'auctionNames', 'locations'));
+    }
+
+
 }
