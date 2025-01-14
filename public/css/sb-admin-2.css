@@ -6499,6 +6499,9 @@ button.bg-dark:focus {
 .bg-transparent {
   background-color: transparent !important;
 }
+.bg-wcblue{
+    background-color:#5271FF !important;
+}
 
 .border {
   border: 1px solid #e3e6f0 !important;
@@ -9591,6 +9594,9 @@ button.bg-dark:focus {
 
 .text-white {
   color: #fff !important;
+}
+.text-wcblue{
+    color:#5271FF;!important;
 }
 
 .text-primary {
