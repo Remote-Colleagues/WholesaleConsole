@@ -72,14 +72,15 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <strong>Your Agreement:</strong> 
-                            @if($user->consoler->your_agreement)
-                                <a href="{{($user->consoler->your_agreement) }}" class="btn btn-success" target="_blank">
+                            @if($user->consoler && $user->consoler->your_agreement)
+                                <a href="{{ Storage::url($user->consoler->your_agreement) }}" class="btn btn-success" target="_blank">
                                     <i class="fas fa-file-pdf"></i> View Agreement
                                 </a>
                             @else
                                 <span class="text-muted">N/A</span>
                             @endif
                         </li>
+                        
                         <li class="list-group-item"><strong>Billing Commencement Period:</strong> {{ $user->consoler->billing_commencement_period ?? 'N/A' }}</li>
                         <li class="list-group-item"><strong>Currency:</strong> {{ $user->consoler->currency ?? 'AUD' }}</li>
                         <li class="list-group-item"><strong>Establishment Fee:</strong> {{ $user->consoler->establishment_fee ?? 'N/A' }}</li>
