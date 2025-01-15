@@ -58,13 +58,41 @@ class AdminController extends Controller
 
         return view('admin.consolerlist', compact('consolers'));
     }
-
-
-
-    public function showAllAuctions()
+    public function showAllAuctions(Request $request)
     {
-        $totalcount = Auctions::count(); // Get the total count of auctions
-        $auctions = Auctions::paginate(30); // Paginate auctions to show 8 per page
+        // Retrieve the filter values from the query string
+        $selectedMake = $request->query('make');
+        $selectedModel = $request->query('model');
+        $selectedBodyType = $request->query('body_type');
+        $selectedBuildDate = $request->query('build_date');
+        $selectedAuctionName = $request->query('auction_name');
+        $selectedLocation = $request->query('location');
+
+        // Start the query
+        $query = Auctions::query();
+
+        // Apply filters if they are present
+        if ($selectedMake) {
+            $query->where('make', $selectedMake);
+        }
+        if ($selectedModel) {
+            $query->where('model', $selectedModel);
+        }
+        if ($selectedBodyType) {
+            $query->where('body_type', $selectedBodyType);
+        }
+        if ($selectedBuildDate) {
+            $query->where('build_date', $selectedBuildDate);
+        }
+        if ($selectedAuctionName) {
+            $query->where('auctioneer', $selectedAuctionName);
+        }
+        if ($selectedLocation) {
+            $query->where('state', $selectedLocation);
+        }
+
+        // Paginate the filtered results
+        $auctions = $query->paginate(30);
 
         // Get unique makes, models, body types, build dates, etc.
         $makes = Auctions::pluck('make')->unique();
@@ -74,9 +102,26 @@ class AdminController extends Controller
         $auctionNames = Auctions::pluck('auctioneer')->unique();
         $locations = Auctions::pluck('state')->unique();
 
-        // Pass the data to the view
-        return view('auctions.index', compact('auctions', 'totalcount', 'models', 'makes', 'bodyTypes', 'buildDates', 'auctionNames', 'locations'));
-    }
+        // Total count of auctions
+        $totalcount = Auctions::count();
 
+        // Pass the data to the view
+        return view('auctions.index', compact(
+            'auctions',
+            'totalcount',
+            'models',
+            'makes',
+            'bodyTypes',
+            'buildDates',
+            'auctionNames',
+            'locations',
+            'selectedMake',
+            'selectedModel',
+            'selectedBodyType',
+            'selectedBuildDate',
+            'selectedAuctionName',
+            'selectedLocation'
+        ));
+    }
 
 }
