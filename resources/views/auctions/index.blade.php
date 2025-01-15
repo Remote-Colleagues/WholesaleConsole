@@ -17,18 +17,6 @@
 
         /* Ensuring the text color is blue for the options */
         .small-filter option {
-<<<<<<< HEAD
-            color: #5271FF !important;
-            font-weight: bold !important;
-        }
-
-        .form-select-sm {
-            padding: 0.25rem;
-            border-width: 0.5px !important;
-        }
-    </style>
-
-=======
             color: #5271FF  !important;  /* Blue text for options */
             font-weight: bold !important; /* Bold text for options */
         }
@@ -39,7 +27,6 @@
             border-width: 0.5px !important;  /* Adjusts border width to be small */
         }
     </style>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
     <div class="container-fluid">
         <h5 style="color: #5271FF">Cars at Auction</h5>
         <div class="card">
@@ -50,11 +37,7 @@
                     <button class="btn" style="color:#5271FF; font-weight: bold;">Remove</button>
                     <button class="btn" style="color:#5271FF; font-weight: bold;">Download</button>
                 </div>
-<<<<<<< HEAD
-                <div style="color: #5271FF">Total: <span>{{ $totalcount }}</span></div>
-=======
                 <div style="color: #5271FF">Total: <span>{{$totalcount}}</span></div>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
             </div>
 
             <div class="card-body">
@@ -66,11 +49,7 @@
                             <select class="form-select form-select-sm small-filter" aria-label="Make Filter">
                                 <option value="">All Makes</option>
                                 @foreach($makes as $make)
-<<<<<<< HEAD
-                                    <option value="{{ $make }}" {{ request('make') == $make ? 'selected' : '' }}>{{ $make }}</option>
-=======
                                     <option value="{{ $make }}">{{ $make }}</option>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                                 @endforeach
                             </select>
                         </div>
@@ -80,11 +59,7 @@
                             <select class="form-select form-select-sm small-filter" aria-label="Model Filter">
                                 <option value="">All Models</option>
                                 @foreach($models as $model)
-<<<<<<< HEAD
-                                    <option value="{{ $model }}" {{ request('model') == $model ? 'selected' : '' }}>{{ $model }}</option>
-=======
                                     <option value="{{ $model }}">{{ $model }}</option>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                                 @endforeach
                             </select>
                         </div>
@@ -94,11 +69,7 @@
                             <select class="form-select form-select-sm small-filter" aria-label="Body Type Filter">
                                 <option value="">All Body Types</option>
                                 @foreach($bodyTypes as $bodyType)
-<<<<<<< HEAD
-                                    <option value="{{ $bodyType }}" {{ request('body_type') == $bodyType ? 'selected' : '' }}>{{ $bodyType }}</option>
-=======
                                     <option value="{{ $bodyType }}">{{ $bodyType }}</option>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                                 @endforeach
                             </select>
                         </div>
@@ -108,11 +79,7 @@
                             <select class="form-select form-select-sm small-filter" aria-label="Build Date Filter">
                                 <option value="">All Build Dates</option>
                                 @foreach($buildDates as $buildDate)
-<<<<<<< HEAD
-                                    <option value="{{ $buildDate }}" {{ request('build_date') == $buildDate ? 'selected' : '' }}>{{ $buildDate }}</option>
-=======
                                     <option value="{{ $buildDate }}">{{ $buildDate }}</option>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                                 @endforeach
                             </select>
                         </div>
@@ -122,11 +89,7 @@
                             <select class="form-select form-select-sm small-filter" aria-label="Auction Name Filter">
                                 <option value="">All Auction Names</option>
                                 @foreach($auctionNames as $auctionName)
-<<<<<<< HEAD
-                                    <option value="{{ $auctionName }}" {{ request('auction_name') == $auctionName ? 'selected' : '' }}>{{ $auctionName }}</option>
-=======
                                     <option value="{{ $auctionName }}">{{ $auctionName }}</option>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                                 @endforeach
                             </select>
                         </div>
@@ -136,12 +99,6 @@
                             <select class="form-select form-select-sm small-filter" aria-label="Location Filter">
                                 <option value="">All Locations</option>
                                 @foreach($locations as $location)
-<<<<<<< HEAD
-                                    <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-=======
                                     <option value="{{ $location }}">{{ $location }}</option>
                                 @endforeach
                             </select>
@@ -154,7 +111,6 @@
                         <a class="" style="color: #5271FF ">Active</a>
                         <a class="" style="color: #5271FF ">Shortlisted</a>
                         <a class="" style="color: #5271FF ">Past Lists</a>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                     </div>
                 </div>
 
@@ -177,25 +133,16 @@
                     <tbody>
                     @foreach ($auctions as $auction)
                         <tr>
-<<<<<<< HEAD
-                            <td><a href="#" class="text-danger">Hide</a></td>
-=======
                             <td>
                                 <p href="#" class="text-danger" >Hide</p>
                                 <a href="#" class="text-danger">Remove</a>
                             </td>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                             <td>{{ $auction->name }}</td>
                             <td>{{ $auction->odometer }}</td>
                             <td>{{ $auction->body_type }}</td>
                             <td>{{ $auction->transmission }}</td>
                             <td>{{ $auction->deadline }}</td>
                             <td>{{ $auction->auctioneer }}</td>
-<<<<<<< HEAD
-                            <td><a href="#" style="color:#5271FF">Edit</a></td>
-                            <td><a href="#" style="color:#5271FF">Shortlist It</a></td>
-                            <td></td>
-=======
                             <td><a href="#" style="color:#5271FF" >Edit</a></td>
                             <td><a href="#" style="color:#5271FF" >Shortlist It</a></td>
                             <td>
@@ -233,7 +180,6 @@
                                     </div>
                                 </div>
                             </td>
->>>>>>> 841973f627e4fba898a5cc3580a3c155f826b391
                         </tr>
                     @endforeach
                     </tbody>
