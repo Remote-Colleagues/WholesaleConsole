@@ -22,6 +22,19 @@
                             <th>Details</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        @foreach($consolers as $consoler)
+                            <tr>
+                                <td>{{ $consoler->console_name }}</td>
+                                {{-- <td>{{ $consoler->user->email }}</td>
+                                <td>{{ $consoler->status }}</td> --}}
+                                <td>
+                                    <a href="{{ route('consoler.details', $consoler->id) }}" class="btn btn-info">View Details</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+            
                     <tfoot style="pointer-events: none; user-select: none;">
                         <tr>
                             <th>Name</th>
@@ -30,18 +43,7 @@
                             <th>Details</th>
                         </tr>
                     </tfoot>
-                    <tbody>
-                        @foreach($consolers as $consoler)
-                            <tr>
-                                <td>{{ $consoler->name }}</td>
-                                <td>{{ $consoler->email }}</td>
-                                <td>{{ $consoler->status }}</td>
-                                <td>
-                                    <a href="{{ route('consoler.details', $consoler->id) }}" style="color: #00E1A1">View Details</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
+                 
                 </table>
             </div>
         </div>
@@ -52,9 +54,6 @@
 
 @endsection <!-- End of content section -->
 
-<!-- Page level plugins -->
-<script src="vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<
 
 <!-- Page level custom scripts -->
-<script src="js/demo/datatables-demo.js"></script>
