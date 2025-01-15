@@ -56,11 +56,14 @@ class AdminController extends Controller
     public function consolerList()
     {
         // $consolers = User::where('user_type', 'consoler')->get();
-        $consolers = Consoler::all();
+        // $consolers = Consoler::all();
 
 
-
-        return view('admin.consolerlist', compact('consolers'));
+        $users = User::select('id', 'name', 'email') // Select only specific fields
+        ->with('consoler') // Load related consoler data
+        ->get();
+    
+        return view('admin.consolerlist', compact('users'));
     }
 
 

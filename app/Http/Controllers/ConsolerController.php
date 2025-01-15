@@ -105,10 +105,15 @@ class ConsolerController extends Controller
     // Display the details of a specific Consoler
     public function show($id)
     {
-        $consoler = Consoler::with('user')->findOrFail($id);
-        // Pass the Consoler data to the view
-        return view('admin.consolerDetails', compact('consoler'));
+        // Fetch the user with the consoler relationship
+        $user = User::where('id', $id)
+            // ->where('role', 'consoler') 
+            ->with('consoler') 
+            ->firstOrFail();
+    
+        return view('admin.consolerDetails', compact('user'));
     }
+    
 
 
     public function viewConsolerDetails($id)

@@ -18,18 +18,21 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Status</th>
+                            <th>Console Name</th>
+                            <th>Contact Person</th>
                             <th>Details</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($consolers as $consoler)
+                        @foreach($users as $user)
                             <tr>
-                                <td>{{ $consoler->console_name }}</td>
-                                {{-- <td>{{ $consoler->user->email }}</td>
-                                <td>{{ $consoler->status }}</td> --}}
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->consoler->console_name ?? 'N/A' }}</td>
+                                <td>{{ $user->consoler->contact_person ?? 'N/A' }}</td>
+
                                 <td>
-                                    <a href="{{ route('consoler.details', $consoler->id) }}" class="btn btn-info">View Details</a>
+                                    <a href="{{ route('consoler.details', $user->id) }}" class="btn btn-info">View Details</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -39,7 +42,8 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Status</th>
+                            <th>Console Name</th>
+                            <th>Contact Person</th>
                             <th>Details</th>
                         </tr>
                     </tfoot>
@@ -50,10 +54,5 @@
     </div>
 
 </div>
-<!-- /.container-fluid -->
 
 @endsection <!-- End of content section -->
-
-<
-
-<!-- Page level custom scripts -->
