@@ -48,11 +48,10 @@ class ConsolerController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // Handle the file upload (Your Agreement)
+        $agreementFullPath = null; 
         if ($request->hasFile('your_agreement')) {
             $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
-        } else {
-            $agreementPath = null;
+            $agreementFullPath = url('storage/' . $agreementPath); // Generate full URL
         }
 
         // Store the user data first to get user_id
@@ -75,7 +74,7 @@ class ConsolerController extends Controller
             'state' => $request->state,
             'country' => $request->country,
             'post_code' => $request->post_code,
-            'your_agreement' => $agreementPath,
+            'your_agreement' => $agreementFullPath,
             'billing_commencement_period' => $request->billing_commencement_period,
             'currency' => 'AUD', // Default currency
             'establishment_fee' => $request->establishment_fee,
