@@ -19,8 +19,10 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
 use App\Http\Controllers\ConsolerController;
 
 Route::get('/consolers/create', [ConsolerController::class, 'create'])->name('consolers.create');
+// Route::post('/consolers', [ConsolerController::class, 'store'])->name('consolers.store');
 Route::post('/consolers', [ConsolerController::class, 'store'])->name('consolers.store');
-Route::get('consolers/{id}/details', [ConsolerController::class, 'viewConsolerDetails'])->name('consoler.details');
+
+Route::get('/consolers/{id}', [ConsolerController::class, 'show'])->name('consoler.details');
 Route::get('/consolerslist', [AdminController::class, 'consolerList'])->name('consoler.list');
 Route::get('/auctions', [AdminController::class, 'showAllAuctions'])->name('auctions.index');
 

@@ -18,43 +18,41 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Status</th>
+                            <th>Console Name</th>
+                            <th>Contact Person</th>
                             <th>Details</th>
                         </tr>
                     </thead>
-                    <tfoot style="pointer-events: none; user-select: none;">
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Details</th>
-                        </tr>
-                    </tfoot>
                     <tbody>
-                        @foreach($consolers as $consoler)
+                        @foreach($users as $user)
                             <tr>
-                                <td>{{ $consoler->name }}</td>
-                                <td>{{ $consoler->email }}</td>
-                                <td>{{ $consoler->status }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->consoler->console_name ?? 'N/A' }}</td>
+                                <td>{{ $user->consoler->contact_person ?? 'N/A' }}</td>
+
                                 <td>
-                                    <a href="{{ route('consoler.details', $consoler->id) }}" style="color: #00E1A1">View Details</a>
+                                    <a href="{{ route('consoler.details', $user->id) }}" class="btn btn-info">View Details</a>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
+            
+                    <tfoot style="pointer-events: none; user-select: none;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Console Name</th>
+                            <th>Contact Person</th>
+                            <th>Details</th>
+                        </tr>
+                    </tfoot>
+                 
                 </table>
             </div>
         </div>
     </div>
 
 </div>
-<!-- /.container-fluid -->
 
 @endsection <!-- End of content section -->
-
-<!-- Page level plugins -->
-<script src="vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-<!-- Page level custom scripts -->
-<script src="js/demo/datatables-demo.js"></script>
