@@ -35,12 +35,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-        // Event listener for filter changes
-        document.querySelectorAll('.small-filter').forEach(function (filter) {
+    document.querySelectorAll('.small-filter').forEach(function (filter) {
         filter.addEventListener('change', function () {
-            // Build URL with selected filter values
+            // Collect all selected filter values
             const filters = {};
-                document.querySelectorAll('.small-filter').forEach(function (select) {
+            document.querySelectorAll('.small-filter').forEach(function (select) {
                 const name = select.getAttribute('aria-label').replace(' Filter', '').toLowerCase();
                 const value = select.value;
                 if (value) {
@@ -48,16 +47,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-                // Reload the page with the new URL
-                let url = window.location.pathname + '?';
-                for (let key in filters) {
-                if (filters.hasOwnProperty(key)) {
-                    url += `${key}=${filters[key]}&`;
-                }
-            }
-                window.location.href = url.slice(0, -1); // Remove the trailing '&'
-            });
+            // Build URL with selected filters
+            const params = new URLSearchParams(filters);
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        });
     });
-    });
+
+});
 
 </script>

@@ -44,76 +44,64 @@
                 <div class="d-flex card-header d-flex justify-content-between align-items-center">
                     <div class="d-flex" style="gap: 5px;">
                         <!-- Make Filter -->
-                        <div class="btn-group">
-                            <select class="form-select form-select-sm small-filter" aria-label="Make Filter">
-                                <option value="">All Makes</option>
-                                @foreach($makes as $make)
-                                    <option value="{{ $make }}" {{ request()->get('make') == $make ? 'selected' : '' }}>
-                                        {{ $make }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <select class="form-select form-select-sm small-filter" aria-label="Make Filter">
+                            <option value="">All Makes</option>
+                            @foreach ($makes as $make)
+                                <option value="{{ $make }}" {{ $selectedMake == $make ? 'selected' : '' }}>
+                                    {{ $make }}
+                                </option>
+                            @endforeach
+                        </select>
 
                         <!-- Model Filter -->
-                        <div class="btn-group">
-                            <select class="form-select form-select-sm small-filter" aria-label="Model Filter">
-                                <option value="">All Models</option>
-                                @foreach($models as $model)
-                                    <option value="{{ $model }}" {{ request()->get('model') == $model ? 'selected' : '' }}>
-                                        {{ $model }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <select class="form-select form-select-sm small-filter" aria-label="Model Filter">
+                            <option value="">All Models</option>
+                            @foreach ($models as $model)
+                                <option value="{{ $model }}" {{ $selectedModel == $model ? 'selected' : '' }}>
+                                    {{ $model }}
+                                </option>
+                            @endforeach
+                        </select>
 
                         <!-- Body Type Filter -->
-                        <div class="btn-group">
-                            <select class="form-select form-select-sm small-filter" aria-label="Body Type Filter">
-                                <option value="">All Body Types</option>
-                                @foreach($bodyTypes as $bodyType)
-                                    <option value="{{ $bodyType }}" {{ request()->get('body_type') == $bodyType ? 'selected' : '' }}>
-                                        {{ $bodyType }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <select class="form-select form-select-sm small-filter" aria-label="Body Type Filter">
+                            <option value="">All Body Types</option>
+                            @foreach ($bodyTypes as $bodyType)
+                                <option value="{{ $bodyType }}" {{ $selectedBodyType == $bodyType ? 'selected' : '' }}>
+                                    {{ $bodyType }}
+                                </option>
+                            @endforeach
+                        </select>
 
                         <!-- Build Date Filter -->
-                        <div class="btn-group">
-                            <select class="form-select form-select-sm small-filter" aria-label="Build Date Filter">
-                                <option value="">All Build Dates</option>
-                                @foreach($buildDates as $buildDate)
-                                    <option value="{{ $buildDate }}" {{ request()->get('build_date') == $buildDate ? 'selected' : '' }}>
-                                        {{ $buildDate }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <select class="form-select form-select-sm small-filter" aria-label="Build Date Filter">
+                            <option value="">All Build Dates</option>
+                            @foreach ($buildDates as $buildDate)
+                                <option value="{{ $buildDate }}" {{ $selectedBuildDate == $buildDate ? 'selected' : '' }}>
+                                    {{ $buildDate }}
+                                </option>
+                            @endforeach
+                        </select>
 
                         <!-- Auction Name Filter -->
-                        <div class="btn-group">
-                            <select class="form-select form-select-sm small-filter" aria-label="Auction Name Filter">
-                                <option value="">All Auction Names</option>
-                                @foreach($auctionNames as $auctionName)
-                                    <option value="{{ $auctionName }}" {{ request()->get('auction_name') == $auctionName ? 'selected' : '' }}>
-                                        {{ $auctionName }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <select class="form-select form-select-sm small-filter" aria-label="Auction Name Filter">
+                            <option value="">All Auction Names</option>
+                            @foreach ($auctionNames as $auctionName)
+                                <option value="{{ $auctionName }}" {{ $selectedAuctionName == $auctionName ? 'selected' : '' }}>
+                                    {{ $auctionName }}
+                                </option>
+                            @endforeach
+                        </select>
 
                         <!-- Location Filter -->
-                        <div class="btn-group">
-                            <select class="form-select form-select-sm small-filter" aria-label="Location Filter">
-                                <option value="">All Locations</option>
-                                @foreach($locations as $location)
-                                    <option value="{{ $location }}" {{ request()->get('location') == $location ? 'selected' : '' }}>
-                                        {{ $location }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <select class="form-select form-select-sm small-filter" aria-label="Location Filter">
+                            <option value="">All Locations</option>
+                            @foreach ($locations as $location)
+                                <option value="{{ $location }}" {{ $selectedLocation == $location ? 'selected' : '' }}>
+                                    {{ $location }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="ms-auto d-flex gap-3">

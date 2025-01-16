@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Auctions;
-
-
-
 class AdminController extends Controller
 {
     public function create()
@@ -32,26 +29,17 @@ class AdminController extends Controller
     ]);
 
     $validated['change_password'] = Hash::make($validated['change_password']);
-
     $admin = Admin::create($validated);
-
     session(['admin' => $admin]);
-
     return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
 }
-
-
-
     public function dashboard()
     {
         if (session()->has('admin')) {
             return view('admin.dashboard');
         }
-
         return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
     }
-
-
     public function consolerList()
     {
         $consolers = User::where('user_type', 'consoler')->get();
@@ -60,68 +48,41 @@ class AdminController extends Controller
     }
     public function showAllAuctions(Request $request)
     {
-        // Retrieve the filter values from the query string
-        $selectedMake = $request->query('make');
-        $selectedModel = $request->query('model');
-        $selectedBodyType = $request->query('body_type');
-        $selectedBuildDate = $request->query('build_date');
-        $selectedAuctionName = $request->query('auction_name');
-        $selectedLocation = $request->query('location');
-
-        // Start the query
+        $filters = $request->only(['make', 'model', 'body_type', 'build_date', 'auction_name', 'location']);
+        $filters['state'] = $filters['location'] ?? null;
+        unset($filters['location']);
+        $filterFields = ['make', 'model', 'body_type', 'build_date', 'auctioneer', 'state'];
+        $filterOptions = [];
+        foreach ($filterFields as $field) {
+            $filterOptions[$field] = Auctions::when($filters, function ($q) use ($filters, $field) {
+                foreach ($filters as $key => $value) {
+                    if ($key !== $field && $value) {
+                        $q->where($key, $value);
+                    }
+                }
+            })->pluck($field)->unique();
+        }
         $query = Auctions::query();
-
-        // Apply filters if they are present
-        if ($selectedMake) {
-            $query->where('make', $selectedMake);
+        foreach ($filters as $key => $value) {
+            if ($value) $query->where($key, $value);
         }
-        if ($selectedModel) {
-            $query->where('model', $selectedModel);
-        }
-        if ($selectedBodyType) {
-            $query->where('body_type', $selectedBodyType);
-        }
-        if ($selectedBuildDate) {
-            $query->where('build_date', $selectedBuildDate);
-        }
-        if ($selectedAuctionName) {
-            $query->where('auctioneer', $selectedAuctionName);
-        }
-        if ($selectedLocation) {
-            $query->where('state', $selectedLocation);
-        }
-
-        // Paginate the filtered results
-        $auctions = $query->paginate(30);
-
-        // Get unique makes, models, body types, build dates, etc.
-        $makes = Auctions::pluck('make')->unique();
-        $models = Auctions::pluck('model')->unique();
-        $bodyTypes = Auctions::pluck('body_type')->unique();
-        $buildDates = Auctions::pluck('build_date')->unique();
-        $auctionNames = Auctions::pluck('auctioneer')->unique();
-        $locations = Auctions::pluck('state')->unique();
-
-        // Total count of auctions
-        $totalcount = Auctions::count();
-
-        // Pass the data to the view
-        return view('auctions.index', compact(
-            'auctions',
-            'totalcount',
-            'models',
-            'makes',
-            'bodyTypes',
-            'buildDates',
-            'auctionNames',
-            'locations',
-            'selectedMake',
-            'selectedModel',
-            'selectedBodyType',
-            'selectedBuildDate',
-            'selectedAuctionName',
-            'selectedLocation'
-        ));
+        $totalcount = $query->count();
+        $auctions = $query->paginate(30)->appends($request->query());
+        return view('auctions.index', [
+            'auctions' => $auctions,
+            'totalcount' => $totalcount,
+            'makes' => $filterOptions['make'],
+            'models' => $filterOptions['model'],
+            'bodyTypes' => $filterOptions['body_type'],
+            'buildDates' => $filterOptions['build_date'],
+            'auctionNames' => $filterOptions['auctioneer'],
+            'locations' => $filterOptions['state'],
+            'selectedMake' => $filters['make'] ?? null,
+            'selectedModel' => $filters['model'] ?? null,
+            'selectedBodyType' => $filters['body_type'] ?? null,
+            'selectedBuildDate' => $filters['build_date'] ?? null,
+            'selectedAuctionName' => $filters['auction_name'] ?? null,
+            'selectedLocation' => $filters['state'] ?? null,
+        ]);
     }
-
 }
