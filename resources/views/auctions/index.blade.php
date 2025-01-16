@@ -4,7 +4,6 @@
 @section('content')
 
     <style>
-        /* Custom small size for the filters */
         .small-filter {
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
@@ -14,16 +13,14 @@
             color: #5271FF !important;
         }
 
-        /* Ensuring the text color is blue for the options */
         .small-filter option {
-            color: #5271FF  !important;  /* Blue text for options */
-            font-weight: bold !important; /* Bold text for options */
+            color: #5271FF  !important;
+            font-weight: bold !important;
         }
 
-        /* Ensuring the border size for select fields */
         .form-select-sm {
-            padding: 0.25rem;  /* Further reduces the padding for smaller height */
-            border-width: 0.5px !important;  /* Adjusts border width to be small */
+            padding: 0.25rem;
+            border-width: 0.5px !important;
         }
     </style>
     <div class="container-fluid">
@@ -42,11 +39,11 @@
             <div class="card-body">
                 <!-- Filter Buttons -->
                 <div class="d-flex card-header d-flex justify-content-between align-items-center">
-                    <div class="d-flex" style="gap: 5px;">
+                    <div class="d-flex " style="gap: 5px;">
                         <!-- Make Filter -->
-                        <select class="form-select form-select-sm small-filter" aria-label="Make Filter">
-                            <option value="">All Makes</option>
-                            @foreach ($makes as $make)
+                        <select class="form-select form-select-sm small-filter  " style="width:100px;" aria-label="Make Filter">
+                            <option value="">All Makes </option>
+                            @foreach ($makes->sort() as $make)
                                 <option value="{{ $make }}" {{ $selectedMake == $make ? 'selected' : '' }}>
                                     {{ $make }}
                                 </option>
@@ -54,9 +51,9 @@
                         </select>
 
                         <!-- Model Filter -->
-                        <select class="form-select form-select-sm small-filter" aria-label="Model Filter">
-                            <option value="">All Models</option>
-                            @foreach ($models as $model)
+                        <select class="form-select form-select-sm small-filter " style="width: 100px;" aria-label="Model Filter">
+                            <option value="">All Models </option>
+                            @foreach ($models->sort() as $model)
                                 <option value="{{ $model }}" {{ $selectedModel == $model ? 'selected' : '' }}>
                                     {{ $model }}
                                 </option>
@@ -64,9 +61,9 @@
                         </select>
 
                         <!-- Body Type Filter -->
-                        <select class="form-select form-select-sm small-filter" aria-label="Body Type Filter">
+                        <select class="form-select form-select-sm small-filter" style="width: 120px;" aria-label="Body Type Filter">
                             <option value="">All Body Types</option>
-                            @foreach ($bodyTypes as $bodyType)
+                            @foreach ($bodyTypes->sort() as $bodyType)
                                 <option value="{{ $bodyType }}" {{ $selectedBodyType == $bodyType ? 'selected' : '' }}>
                                     {{ $bodyType }}
                                 </option>
@@ -74,9 +71,9 @@
                         </select>
 
                         <!-- Build Date Filter -->
-                        <select class="form-select form-select-sm small-filter" aria-label="Build Date Filter">
-                            <option value="">All Build Dates</option>
-                            @foreach ($buildDates as $buildDate)
+                        <select class="form-select form-select-sm small-filter " style="width: 120px;" aria-label="Build Date Filter">
+                            <option value="">All Build Dates </option>
+                            @foreach ($buildDates->sort() as $buildDate)
                                 <option value="{{ $buildDate }}" {{ $selectedBuildDate == $buildDate ? 'selected' : '' }}>
                                     {{ $buildDate }}
                                 </option>
@@ -84,9 +81,9 @@
                         </select>
 
                         <!-- Auction Name Filter -->
-                        <select class="form-select form-select-sm small-filter" aria-label="Auction Name Filter">
-                            <option value="">All Auction Names</option>
-                            @foreach ($auctionNames as $auctionName)
+                        <select class="form-select form-select-sm small-filter" style="width: 150px;" aria-label="Auction Name Filter">
+                            <option value="">All Auction Names </option>
+                            @foreach ($auctionNames->sort() as $auctionName)
                                 <option value="{{ $auctionName }}" {{ $selectedAuctionName == $auctionName ? 'selected' : '' }}>
                                     {{ $auctionName }}
                                 </option>
@@ -94,9 +91,9 @@
                         </select>
 
                         <!-- Location Filter -->
-                        <select class="form-select form-select-sm small-filter" aria-label="Location Filter">
-                            <option value="">All Locations</option>
-                            @foreach ($locations as $location)
+                        <select class="form-select form-select-sm small-filter" style="width: 120px;" aria-label="Location Filter">
+                            <option value="">All Locations </option>
+                            @foreach ($locations->sort() as $location)
                                 <option value="{{ $location }}" {{ $selectedLocation == $location ? 'selected' : '' }}>
                                     {{ $location }}
                                 </option>
