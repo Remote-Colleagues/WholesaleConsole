@@ -20,10 +20,12 @@ use App\Http\Controllers\ConsolerController;
 
 Route::get('/consolers/create', [ConsolerController::class, 'create'])->name('consolers.create');
 Route::post('/consolers', [ConsolerController::class, 'store'])->name('consolers.store');
-Route::get('consolers/{id}/details', [ConsolerController::class, 'viewConsolerDetails'])->name('consoler.details');
+
+Route::get('/consolers/{id}', [ConsolerController::class, 'show'])->name('consoler.details');
 Route::get('/consolerslist', [AdminController::class, 'consolerList'])->name('consoler.list');
 Route::get('/auctions', [AdminController::class, 'showAllAuctions'])->name('auctions.index');
 
+ Route::post('/auctions/import', [AdminController::class, 'import'])->name('auctions.import');
 
 
 use App\Http\Controllers\Controller;
