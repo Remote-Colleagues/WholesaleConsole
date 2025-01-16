@@ -8,6 +8,7 @@ use App\Models\Consoler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 
 
@@ -84,6 +85,100 @@ class AdminController extends Controller
         // Pass the data to the view
         return view('auctions.index', compact('auctions', 'totalcount', 'models', 'makes', 'bodyTypes', 'buildDates', 'auctionNames', 'locations'));
     }
-
-
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csvFile' => 'required|mimes:csv,txt|max:2048',
+        ]);
+    
+        $duplicateIdentifiers = [];
+    
+        try {
+            $file = $request->file('csvFile');
+            $data = array_map('str_getcsv', file($file->getRealPath()));
+    
+            $headers = array_map('trim', $data[0]); 
+            unset($data[0]); 
+    
+            foreach ($data as $row) {
+                $row = array_combine($headers, $row);
+    
+                $uniqueIdentifier = $row['unique_identifier'] ?? null;
+                // Check if the unique_identifier exists in the database
+                $existingRecord = Auctions::where('unique_identifier', $uniqueIdentifier)->first();
+    
+                if ($existingRecord) {
+                    // If the record exists, update it
+                    $existingRecord->update([
+                        'name' => $row['name'] ?? null,
+                        'make' => $row['make'] ?? null,
+                        'model' => $row['model'] ?? null,
+                        'build_date' => isset($row['build_date']) ? \Carbon\Carbon::parse($row['build_date']) : null,
+                        'odometer' => $row['odometer'] ?? null,
+                        'body_type' => $row['body_type'] ?? null,
+                        'fuel' => $row['fuel'] ?? null,
+                        'transmission' => $row['transmission'] ?? null,
+                        'seats' => $row['seats'] ?? null,
+                        'auctioneer' => $row['auctioneer'] ?? null,
+                        'hours' => $row['hours'] ?? null,
+                        'state' => $row['state'] ?? null,
+                        'link_to_auction' => $row['link_to_auction'] ?? null,
+                        'other_specs' => $row['other_specs'] ?? null,
+                        'vin' => $row['vin'] ?? null,
+                        'auction_registration_link' => $row['auction_registration_link'] ?? null,
+                        'current_market_retail' => $row['current_market_retail'] ?? null,
+                    ]);
+    
+                    // Calculate and update the deadline
+                    $hours = $existingRecord->hours ?? 0; // Default to 0 if no hours are set
+                    $updatedAt = \Carbon\Carbon::parse($existingRecord->updated_at);
+                    $deadline = $updatedAt->addHours($hours)->toDateTimeString(); // Add hours to updated_at
+                    $existingRecord->update(['deadline' => $deadline]);
+    
+                    // Explicitly update the 'updated_at' column using touch()
+                    $existingRecord->touch();  // This will update 'updated_at'
+    
+                    // Add the duplicate identifier to the list
+                    $duplicateIdentifiers[] = $uniqueIdentifier;
+                } else {
+                    // If no record is found, create a new record
+                    $newRecord = Auctions::create([
+                        'unique_identifier' => $uniqueIdentifier,
+                        'name' => $row['name'] ?? null,
+                        'make' => $row['make'] ?? null,
+                        'model' => $row['model'] ?? null,
+                        'build_date' => isset($row['build_date']) ? \Carbon\Carbon::parse($row['build_date']) : null,
+                        'odometer' => $row['odometer'] ?? null,
+                        'body_type' => $row['body_type'] ?? null,
+                        'fuel' => $row['fuel'] ?? null,
+                        'transmission' => $row['transmission'] ?? null,
+                        'seats' => $row['seats'] ?? null,
+                        'auctioneer' => $row['auctioneer'] ?? null,
+                        'hours' => $row['hours'] ?? null,
+                        'state' => $row['state'] ?? null,
+                        'link_to_auction' => $row['link_to_auction'] ?? null,
+                        'other_specs' => $row['other_specs'] ?? null,
+                        'vin' => $row['vin'] ?? null,
+                        'auction_registration_link' => $row['auction_registration_link'] ?? null,
+                        'current_market_retail' => $row['current_market_retail'] ?? null,
+                    ]);
+    
+                    // Calculate and set the deadline for new records
+                    $hours = $newRecord->hours ?? 0; // Default to 0 if no hours are set
+                    $updatedAt = \Carbon\Carbon::parse($newRecord->updated_at);
+                    $deadline = $updatedAt->addHours($hours)->toDateTimeString(); // Add hours to updated_at
+                    $newRecord->update(['deadline' => $deadline]);
+                }
+            }
+    
+            // Redirect with the list of duplicates so we can show a modal or notification
+            return redirect()->route('auctions.index')->with('duplicates', $duplicateIdentifiers);
+    
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error uploading CSV file');
+        }
+    }
+    
+    
+    
 }

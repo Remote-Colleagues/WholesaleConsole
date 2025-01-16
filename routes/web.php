@@ -26,6 +26,7 @@ Route::get('/consolers/{id}', [ConsolerController::class, 'show'])->name('consol
 Route::get('/consolerslist', [AdminController::class, 'consolerList'])->name('consoler.list');
 Route::get('/auctions', [AdminController::class, 'showAllAuctions'])->name('auctions.index');
 
+Route::post('/auctions/import', [AdminController::class, 'import'])->name('auctions.import');
 
 
 use App\Http\Controllers\Controller;
