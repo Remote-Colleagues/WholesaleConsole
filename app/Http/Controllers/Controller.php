@@ -59,7 +59,7 @@ class Controller
         return view('policy');
     }
 
-  
+
     /**
      * Handle the logout request.
      */
@@ -69,5 +69,19 @@ class Controller
         session()->flush();
         return redirect()->route('login.form')->with('success', 'Logged out successfully!');
     }
-    
+    public function updateStatus(Request $request)
+    {
+        $user = User::find($request->user_id);
+
+        if ($user) {
+            $user->status = $request->status;
+            $user->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+
 }

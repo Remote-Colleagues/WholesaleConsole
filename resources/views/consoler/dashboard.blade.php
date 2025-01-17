@@ -1,5 +1,5 @@
 this is consoler dashboard
-
+@include('admin.layouts.app')
 <form action="{{ route('logout') }}" method="POST">
         @csrf
         <button type="submit">Logout</button>

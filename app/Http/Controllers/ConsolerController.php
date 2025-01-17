@@ -48,7 +48,7 @@ class ConsolerController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        $agreementFullPath = null; 
+        $agreementFullPath = null;
         if ($request->hasFile('your_agreement')) {
             $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
             $agreementFullPath = url('storage/' . $agreementPath); // Generate full URL
@@ -91,13 +91,9 @@ class ConsolerController extends Controller
         return redirect()->route('consoler.list')->with('success', 'Consoler added successfully!');
     }
 
-
-
-
     public function index()
     {
         $consolers = Consoler::all();
-        dd($consolers);
         return view('admin.consolerlist', compact('consolers'));
     }
 
@@ -105,20 +101,87 @@ class ConsolerController extends Controller
     public function show($id)
     {
         $user = User::where('id', $id)
-            // ->where('role', 'consoler') 
-            ->with('consoler') 
+            // ->where('role', 'consoler')
+            ->with('consoler')
             ->firstOrFail();
-    
+
         return view('admin.consolerDetails', compact('user'));
     }
-    
 
 
-    public function viewConsolerDetails($id)
+    public function edit($id)
     {
-        $consoler = Consoler::find($id);
-        $consoler = Consoler::where('user_id', $id)->first();
-
-        return view('admin.consolerDetails', compact('consoler'));
+        $user = User::findOrFail($id); // Fetch user by ID
+        $consoler = Consoler::where('user_id', $user->id)->firstOrFail(); // Fetch related consoler details
+        return view('consoler.update', compact('user', 'consoler'));
     }
+
+
+    public function update(Request $request, $id)
+    {
+        $consoler = Consoler::findOrFail($id);
+        $user = User::findOrFail($consoler->user_id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8|confirmed',
+            'console_name' => 'required|string|max:255',
+            'contact_person' => 'required|string|max:255',
+            'contact_phone_number' => 'required|string|max:20',
+            'abn_number' => 'required|string|max:11',
+            'building' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
+            'post_code' => 'required|string|max:10',
+            'your_agreement' => 'nullable|file|mimes:pdf',
+            'billing_commencement_period' => 'nullable|date',
+            'establishment_fee' => 'nullable|numeric|min:0',
+            'establishment_fee_date' => 'nullable|date',
+            'monthly_subscription_fee' => 'nullable|numeric|min:0',
+            'monthly_subscription_fee_date' => 'nullable|date',
+            'admin_fee' => 'nullable|numeric|min:0',
+            'admin_fee_date' => 'nullable|date',
+            'comm_charge' => 'nullable|numeric|min:0',
+            'comm_charge_date' => 'nullable|date',
+        ]);
+
+        // Update user details
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        if (!empty($validatedData['password'])) {
+            $user->password = Hash::make($validatedData['password']);
+        }
+        $user->save();
+
+        // Update consoler details
+        $consoler->console_name = $validatedData['console_name'];
+        $consoler->contact_person = $validatedData['contact_person'];
+        $consoler->contact_phone_number = $validatedData['contact_phone_number'];
+        $consoler->abn_number = $validatedData['abn_number'];
+        $consoler->building = $validatedData['building'];
+        $consoler->city = $validatedData['city'];
+        $consoler->state = $validatedData['state'];
+        $consoler->country = $validatedData['country'];
+        $consoler->post_code = $validatedData['post_code'];
+
+        if ($request->hasFile('your_agreement')) {
+            $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
+            $consoler->your_agreement = $agreementPath;
+        }
+        $consoler->billing_commencement_period = $validatedData['billing_commencement_period'];
+        $consoler->establishment_fee = $validatedData['establishment_fee'];
+        $consoler->establishment_fee_date = $validatedData['establishment_fee_date'];
+        $consoler->monthly_subscription_fee = $validatedData['monthly_subscription_fee'];
+        $consoler->monthly_subscription_fee_date = $validatedData['monthly_subscription_fee_date'];
+        $consoler->admin_fee = $validatedData['admin_fee'];
+        $consoler->admin_fee_date = $validatedData['admin_fee_date'];
+        $consoler->comm_charge = $validatedData['comm_charge'];
+        $consoler->comm_charge_date = $validatedData['comm_charge_date'];
+        $consoler->save();
+        return redirect()->route('consoler.list')->with('success', 'Consoler updated successfully!');
+    }
+
+
 }

@@ -29,7 +29,12 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
                     <button class="btn" style="color:#5271FF;font-weight: bold;">Reboot</button>
-                    <button class="btn" style="color:#5271FF; font-weight: bold;">Add</button>
+                    <form id="csv-upload-form" action="{{ route('auctions.import') }}" method="POST" enctype="multipart/form-data" style="display: inline;">
+                        @csrf
+                        <a href="javascript:void(0);" class="btn btn-add" style="color:#5271FF; font-weight: bold;">Add</a>
+                        <input type="file" id="csv-upload" name="csv_file" style="display: none;" accept=".csv">
+                    </form>
+
                     <button class="btn" style="color:#5271FF; font-weight: bold;">Remove</button>
                     <button class="btn" style="color:#5271FF; font-weight: bold;">Download</button>
                 </div>
@@ -128,7 +133,7 @@
                     @foreach ($auctions as $auction)
                         <tr>
                             <td>
-                                <p href="#" class="text-danger" >Hide</p>
+                                <a href="#" class="text-danger" >Hide</a>
                                 <a href="#" class="text-danger">Remove</a>
                             </td>
                             <td>{{ $auction->name }}</td>
@@ -189,6 +194,6 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/action.js') }}"></script>
 
-@include('layouts.model')
 @endsection

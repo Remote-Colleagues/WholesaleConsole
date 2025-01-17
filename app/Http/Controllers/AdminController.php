@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Auctions;
-use App\Models\Consoler;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 
 
@@ -47,14 +44,10 @@ class AdminController extends Controller
     }
     public function consolerList()
     {
-        // $consolers = User::where('user_type', 'consoler')->get();
-        // $consolers = Consoler::all();
-
-
-        $users = User::select('id', 'name', 'email') // Select only specific fields
-        ->with('consoler') // Load related consoler data
-        ->get();
-
+        $users = User::select('id', 'name', 'email','status') // Select only specific fields
+        ->with('consoler')
+            ->where('user_type', 'consoler') // Filter by user_type
+            ->get();
         return view('admin.consolerlist', compact('users'));
     }
     public function showAllAuctions(Request $request)
@@ -146,10 +139,13 @@ class AdminController extends Controller
                     $deadline = $updatedAt->addHours($hours)->toDateTimeString(); // Add hours to updated_at
                     $existingRecord->update(['deadline' => $deadline]);
 
-                    $existingRecord->touch();
+                    // Explicitly update the 'updated_at' column using touch()
+                    $existingRecord->touch();  // This will update 'updated_at'
 
+                    // Add the duplicate identifier to the list
                     $duplicateIdentifiers[] = $uniqueIdentifier;
                 } else {
+                    // If no record is found, create a new record
                     $newRecord = Auctions::create([
                         'unique_identifier' => $uniqueIdentifier,
                         'name' => $row['name'] ?? null,
@@ -179,6 +175,7 @@ class AdminController extends Controller
                 }
             }
 
+            // Redirect with the list of duplicates so we can show a modal or notification
             return redirect()->route('auctions.index')->with('duplicates', $duplicateIdentifiers);
 
         } catch (\Exception $e) {
