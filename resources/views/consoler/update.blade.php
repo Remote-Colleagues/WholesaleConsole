@@ -52,7 +52,15 @@
             <!-- User Type -->
             <input type="hidden" name="user_type" value="consoler">
             <!-- Status -->
-            <input type="hidden" name="status" value="active">
+{{--            <input type="hidden" name="status" value="active">--}}
+            <!-- Status -->
+            <div class="mb-3 d-flex">
+                <label for="status" class="form-label col-sm-3">Status <span class="text-danger">*</span></label>
+                <select class="form-select form-select-sm col-sm-3" name="status" id="status" required>
+                    <option value="active" {{ old('status', $user->status) === 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ old('status', $user->status) === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                </select>
+            </div>
 
             <!-- Console Name -->
             <div class="mb-3 d-flex">

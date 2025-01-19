@@ -27,13 +27,13 @@
 </head>
 <body id="page-top">
     <div id="wrapper">
-        @include('admin.layouts.navigate')
+        @include('consoler.layouts.navigate')
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                @include('admin.layouts.header')
+                @include('consoler.layouts.header')
                 @yield('content')
             </div>
-            @include('admin.layouts.footer')
+            @include('consoler.layouts.footer')
         </div>
     </div>
 

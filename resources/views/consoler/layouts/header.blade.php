@@ -10,9 +10,9 @@
         <div class="d-flex flex-column align-items-start">
             <!-- Primary Header -->
             <span class="text-white font-weight-bold">
-                Wc Admin >
-                @yield('headerTitle', 'Dashboard')
-            </span>
+        {{ isset($user->name) ? $user->name : 'consoler' }} >
+        @yield('headerTitle', 'Dashboard')
+    </span>
 
             @isset($secondaryHeader)
                 <div class="mt-1">
@@ -24,35 +24,6 @@
 
                         @if (!$loop->last)
                             <span class="text-white mx-0"></span>
-                        @endif
-                    @endforeach
-                </div>
-            @endisset
-        </div>
-
-        <!-- Right Side (Third and Fourth Headers) -->
-        <div class="d-flex flex-column align-items-end">
-            @isset($thirdHeader)
-                <div class="mt-0">
-                    @foreach ($thirdHeader as $title => $link)
-                        <a href="{{ $link }}" class="text-decoration-none" style="color: #00E1A1">
-                            {{ $title }}
-                        </a>
-                        @if (!$loop->last)
-                            <span class="text-white mx-2"></span>
-                        @endif
-                    @endforeach
-                </div>
-            @endisset
-
-            @isset($fourthHeader)
-                <div class="mt-0">
-                    @foreach ($fourthHeader as $title => $link)
-                        <a href="{{ $link }}" class="text-decoration-none"  style="color: #00E1A1">
-                            {{ $title }}{{ is_numeric($link) ? ': ' . $link : '' }}
-                        </a>
-                        @if (!$loop->last)
-                            <span class="text-white mx-2" ></span>
                         @endif
                     @endforeach
                 </div>

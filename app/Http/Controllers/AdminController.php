@@ -35,6 +35,7 @@ class AdminController extends Controller
     session(['admin' => $admin]);
     return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
 }
+
     public function dashboard()
     {
         if (session()->has('admin')) {
@@ -42,6 +43,24 @@ class AdminController extends Controller
         }
         return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
     }
+
+//    public function dashboard()
+//    {
+//        if (session()->has('is_admin') && session('is_admin')) {
+//            $user = session('user');
+//            return view('admin.dashboard', compact('user'));
+//        } elseif (session()->has('is_consoler') && session('is_consoler')) {
+//            $user = session('user');
+//            return view('consoler.dashboard', compact('user'));
+//        } elseif (session()->has('is_partner') && session('is_partner')) {
+//            $user = session('user');
+//            return view('partner.dashboard', compact('user'));
+//        }
+//
+//        // If no valid session is found, redirect to login
+//        return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
+//    }
+
     public function consolerList()
     {
         $users = User::select('id', 'name', 'email','status') // Select only specific fields
@@ -89,6 +108,7 @@ class AdminController extends Controller
             'selectedLocation' => $filters['state'] ?? null,
         ]);
     }
+
     public function import(Request $request)
     {
         $request->validate([

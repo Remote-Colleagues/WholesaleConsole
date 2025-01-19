@@ -67,7 +67,9 @@ class Controller
     {
         Auth::logout();
         session()->flush();
-        return redirect()->route('login.form')->with('success', 'Logged out successfully!');
+//        return redirect()->route('login.form')->with('success', 'Logged out successfully!');
+        return redirect('/')->with('success', 'Logged out successfully!');
+
     }
     public function updateStatus(Request $request)
     {

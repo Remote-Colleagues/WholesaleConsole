@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auctions;
 use App\Models\User;
 use App\Models\Consoler;
 use Illuminate\Http\Request;
@@ -19,6 +20,17 @@ class ConsolerController extends Controller
         }
         return redirect()->route('login.form')->with('error', 'You must be logged in as an admin to access this page.');
     }
+
+    public function Dashboard()
+    {
+        if (session()->has('is_consoler') && session('is_consoler')) {
+            $user = session('user');
+            return view('consoler.dashboard', compact('user'));
+        }
+
+        return redirect()->route('login.form')->with('error', 'You must be logged in as a consoler to access the dashboard.');
+    }
+
     public function store(Request $request)
     {
         // Validate the incoming data
@@ -104,28 +116,38 @@ class ConsolerController extends Controller
             // ->where('role', 'consoler')
             ->with('consoler')
             ->firstOrFail();
-
         return view('admin.consolerDetails', compact('user'));
     }
 
+    public function showdetail($id)
+    {
+        $user = User::where('id', $id)
+            ->with('consoler') // Assuming you have a consoler relationship defined
+            ->firstOrFail();
 
+        // Return the consoler details view with the user data
+        return view('consoler.consolerDetails', compact('user'));
+    }
     public function edit($id)
     {
-        $user = User::findOrFail($id); // Fetch user by ID
-        $consoler = Consoler::where('user_id', $user->id)->firstOrFail(); // Fetch related consoler details
+        $user = User::findOrFail($id);
+        $consoler = Consoler::where('user_id', $user->id)->firstOrFail();
         return view('consoler.update', compact('user', 'consoler'));
     }
 
 
     public function update(Request $request, $id)
     {
+        // Find the consoler and associated user
         $consoler = Consoler::findOrFail($id);
         $user = User::findOrFail($consoler->user_id);
 
+        // Validate incoming data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
+            'status' => 'required|in:active,inactive',
             'console_name' => 'required|string|max:255',
             'contact_person' => 'required|string|max:255',
             'contact_phone_number' => 'required|string|max:20',
@@ -147,41 +169,94 @@ class ConsolerController extends Controller
             'comm_charge_date' => 'nullable|date',
         ]);
 
-        // Update user details
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
-        if (!empty($validatedData['password'])) {
-            $user->password = Hash::make($validatedData['password']);
-        }
-        $user->save();
+        try {
+            // Update user details
+            $user->update([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'status' => $validatedData['status'],
+            ]);
 
-        // Update consoler details
-        $consoler->console_name = $validatedData['console_name'];
-        $consoler->contact_person = $validatedData['contact_person'];
-        $consoler->contact_phone_number = $validatedData['contact_phone_number'];
-        $consoler->abn_number = $validatedData['abn_number'];
-        $consoler->building = $validatedData['building'];
-        $consoler->city = $validatedData['city'];
-        $consoler->state = $validatedData['state'];
-        $consoler->country = $validatedData['country'];
-        $consoler->post_code = $validatedData['post_code'];
+            if (!empty($validatedData['password'])) {
+                $user->password = Hash::make($validatedData['password']);
+                $user->save();
+            }
 
-        if ($request->hasFile('your_agreement')) {
-            $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
-            $consoler->your_agreement = $agreementPath;
+            // Update consoler details
+            $consolerData = [
+                'console_name' => $validatedData['console_name'],
+                'contact_person' => $validatedData['contact_person'],
+                'contact_phone_number' => $validatedData['contact_phone_number'],
+                'abn_number' => $validatedData['abn_number'],
+                'building' => $validatedData['building'],
+                'city' => $validatedData['city'],
+                'state' => $validatedData['state'],
+                'country' => $validatedData['country'],
+                'post_code' => $validatedData['post_code'],
+                'billing_commencement_period' => $validatedData['billing_commencement_period'],
+                'establishment_fee' => $validatedData['establishment_fee'],
+                'establishment_fee_date' => $validatedData['establishment_fee_date'],
+                'monthly_subscription_fee' => $validatedData['monthly_subscription_fee'],
+                'monthly_subscription_fee_date' => $validatedData['monthly_subscription_fee_date'],
+                'admin_fee' => $validatedData['admin_fee'],
+                'admin_fee_date' => $validatedData['admin_fee_date'],
+                'comm_charge' => $validatedData['comm_charge'],
+                'comm_charge_date' => $validatedData['comm_charge_date'],
+            ];
+
+            if ($request->hasFile('your_agreement')) {
+                $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
+                $consolerData['your_agreement'] = $agreementPath;
+            }
+
+            $consoler->update($consolerData);
+
+            return redirect()->route('consoler.list')->with('success', 'Consoler updated successfully!');
+        } catch (\Exception $e) {
+            // Log the error and redirect with an error message
+            Log::error('Consoler Update Failed: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Failed to update consoler. Please try again.']);
         }
-        $consoler->billing_commencement_period = $validatedData['billing_commencement_period'];
-        $consoler->establishment_fee = $validatedData['establishment_fee'];
-        $consoler->establishment_fee_date = $validatedData['establishment_fee_date'];
-        $consoler->monthly_subscription_fee = $validatedData['monthly_subscription_fee'];
-        $consoler->monthly_subscription_fee_date = $validatedData['monthly_subscription_fee_date'];
-        $consoler->admin_fee = $validatedData['admin_fee'];
-        $consoler->admin_fee_date = $validatedData['admin_fee_date'];
-        $consoler->comm_charge = $validatedData['comm_charge'];
-        $consoler->comm_charge_date = $validatedData['comm_charge_date'];
-        $consoler->save();
-        return redirect()->route('consoler.list')->with('success', 'Consoler updated successfully!');
     }
 
+    public function showAllAuctions(Request $request)
+    {
+        $filters = $request->only(['make', 'model', 'body_type', 'build_date', 'auction_name', 'location']);
+        $filters['state'] = $filters['location'] ?? null;
+        unset($filters['location']);
+        $filterFields = ['make', 'model', 'body_type', 'build_date', 'auctioneer', 'state'];
+        $filterOptions = [];
+        foreach ($filterFields as $field) {
+            $filterOptions[$field] = Auctions::when($filters, function ($q) use ($filters, $field) {
+                foreach ($filters as $key => $value) {
+                    if ($key !== $field && $value) {
+                        $q->where($key, $value);
+                    }
+                }
+            })->pluck($field)->unique();
+        }
+        $query = Auctions::query();
+        foreach ($filters as $key => $value) {
+            if ($value) $query->where($key, $value);
+        }
+        $totalcount = $query->count();
+        $auctions = $query->paginate(30)->appends($request->query());
+        return view('consoler.auctioncar', [
+            'auctions' => $auctions,
+            'totalcount' => $totalcount,
+            'makes' => $filterOptions['make'],
+            'models' => $filterOptions['model'],
+            'bodyTypes' => $filterOptions['body_type'],
+            'buildDates' => $filterOptions['build_date'],
+            'auctionNames' => $filterOptions['auctioneer'],
+            'locations' => $filterOptions['state'],
+            'selectedMake' => $filters['make'] ?? null,
+            'selectedModel' => $filters['model'] ?? null,
+            'selectedBodyType' => $filters['body_type'] ?? null,
+            'selectedBuildDate' => $filters['build_date'] ?? null,
+            'selectedAuctionName' => $filters['auction_name'] ?? null,
+            'selectedLocation' => $filters['state'] ?? null,
+        ]);
+    }
 
 }
