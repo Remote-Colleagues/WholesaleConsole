@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.app')
 @section('headerTitle', 'Car at Auctions')
 @section('title', 'Auctions List')
@@ -292,14 +291,33 @@
     document.addEventListener('DOMContentLoaded', function () {
             let expandedRow = null;
 
-                    // Reload the page with the new URL
-                    let url = window.location.pathname + '?';
-                    for (let key in filters) {
-                        if (filters.hasOwnProperty(key)) {
-                            url += `${key}=${filters[key]}&`;
+            document.querySelectorAll('.toggle-details').forEach(function (button) {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const auctionId = this.getAttribute('data-auction-id');
+                    const detailsRow = document.getElementById(`details-${auctionId}`);
+                    const expandButton = this.parentElement.querySelector('.text-info');
+                    const revertButton = this.parentElement.querySelector('.text-danger');
+
+                    // Close previously expanded row if it exists and is not the same row
+                    if (expandedRow && expandedRow !== detailsRow) {
+                        expandedRow.classList.add('d-none');
+                        const prevExpandButton = expandedRow.previousElementSibling.querySelector('.text-info');
+                        const prevRevertButton = expandedRow.previousElementSibling.querySelector('.text-danger');
+                        if (prevExpandButton && prevRevertButton) {
+                            prevExpandButton.classList.remove('d-none');
+                            prevRevertButton.classList.add('d-none');
                         }
                     }
-                    window.location.href = url.slice(0, -1); // Remove the trailing '&'
+
+                    // Toggle the current row (expand/collapse)
+                    detailsRow.classList.toggle('d-none');
+                    expandButton.classList.toggle('d-none');
+                    revertButton.classList.toggle('d-none');
+
+                    // Update the reference to the expanded row
+                    expandedRow = detailsRow.classList.contains('d-none') ? null : detailsRow;
                 });
             });
         });
