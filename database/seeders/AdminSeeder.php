@@ -22,7 +22,7 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        Admin::updateOrCreate(
+        Admin::firstOrCreate(
             ['user_id' => $adminUser->id],
             [
                 'name' => 'Pashupati Sah',
