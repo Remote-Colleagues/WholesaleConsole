@@ -43,7 +43,6 @@ class ConsolerController extends Controller
             'comm_charge' => 'nullable|numeric',
         ]);
 
-        // If validation fails, return back with error messages
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
@@ -54,15 +53,13 @@ class ConsolerController extends Controller
             $agreementFullPath = url('storage/' . $agreementPath); // Generate full URL
         }
 
-        // Store the user data first to get user_id
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'consoler', // Add a default user role for this type of user
+            'role' => 'consoler', 
         ]);
 
-        // Store the Consoler data
         Consoler::create([
             'user_id' => $user->id,
             'console_name' => $request->console_name,
@@ -76,7 +73,7 @@ class ConsolerController extends Controller
             'post_code' => $request->post_code,
             'your_agreement' => $agreementFullPath,
             'billing_commencement_period' => $request->billing_commencement_period,
-            'currency' => 'AUD', // Default currency
+            'currency' => 'AUD', 
             'establishment_fee' => $request->establishment_fee,
             'establishment_fee_date' => $request->establishment_fee_date,
             'monthly_subscription_fee' => $request->monthly_subscription_fee,
@@ -87,7 +84,6 @@ class ConsolerController extends Controller
             'comm_charge_date' => $request->comm_charge_date,
         ]);
 
-        // Redirect back with a success message
         return redirect()->route('consoler.list')->with('success', 'Consoler added successfully!');
     }
 
@@ -101,12 +97,9 @@ class ConsolerController extends Controller
         return view('admin.consolerlist', compact('consolers'));
     }
 
-    // Display the details of a specific Consoler
     public function show($id)
     {
-        // Fetch the user with the consoler relationship
         $user = User::where('id', $id)
-            // ->where('role', 'consoler') 
             ->with('consoler') 
             ->firstOrFail();
     
