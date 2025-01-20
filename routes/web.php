@@ -19,14 +19,22 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
 use App\Http\Controllers\ConsolerController;
 
 Route::get('/consolers/create', [ConsolerController::class, 'create'])->name('consolers.create');
-// Route::post('/consolers', [ConsolerController::class, 'store'])->name('consolers.store');
 Route::post('/consolers', [ConsolerController::class, 'store'])->name('consolers.store');
+Route::get('/consoler/edit/{id}', [ConsolerController::class, 'edit'])->name('consoler.edit');
+Route::put('/consoler/update/{id}', [ConsolerController::class, 'update'])->name('consoler.update');
+Route::get('/consoler/details/{id}', [ConsolerController::class, 'showdetail'])->name('consoler.profile');
+Route::get('car-auctions', [ConsolerController::class, 'showAllAuctions'])->name('auctions.car');
+
+Route::get('/consoler/dashboard', [ConsolerController::class, 'Dashboard'])->name('consoler.dashboard');
+
 
 Route::get('/consolers/{id}', [ConsolerController::class, 'show'])->name('consoler.details');
 Route::get('/consolerslist', [AdminController::class, 'consolerList'])->name('consoler.list');
 Route::get('/auctions', [AdminController::class, 'showAllAuctions'])->name('auctions.index');
 
-Route::post('/auctions/import', [AdminController::class, 'import'])->name('auctions.import');
+ Route::post('/auctions/import', [AdminController::class, 'import'])->name('auctions.import');
+
+Route::post('/update-status', [Controller::class, 'updateStatus']);
 
 
 use App\Http\Controllers\Controller;
