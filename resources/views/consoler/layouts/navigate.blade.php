@@ -15,7 +15,7 @@
     <!-- Nav Item - Consolers -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('consoler.profile', Auth::user()->id) }}">
-            <i class="fas fa-fw fa-cogs"></i>
+            <i class="fas fa-fw fa-user"></i>
             <span>Your Profile</span>
         </a>
     </li>
@@ -30,7 +30,15 @@
             <span>Cars at Auction</span>
         </a>
     </li>
+    <hr class="sidebar-divider">
 
+    <!-- Nav Item - Promote your listing -->
+    <li class="nav-item">
+        <a class="nav-link" href="{{route('invoices.show')}}">
+            <i class="fas fa-fw fa-file-invoice-dollar"></i>
+            <span>Invoice</span>
+        </a>
+    </li>
 
 <!-- Divider -->
 <hr class="sidebar-divider">

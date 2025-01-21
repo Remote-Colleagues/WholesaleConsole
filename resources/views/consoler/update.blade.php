@@ -36,7 +36,7 @@
                 <input type="email" class="form-control form-control-sm col-sm-3" id="email" name="email" value="{{ old('email', $user->email) }}" required>
             </div>
 
-            <!-- Password -->
+{{--            <!-- Password -->--}}
             <div class="mb-3 d-flex">
                 <label for="password" class="form-label col-sm-3">Password <span class="text-danger">*</span></label>
                 <input type="password" class="form-control form-control-sm col-sm-3" id="password" name="password" oninput="validatePassword()">
@@ -51,8 +51,6 @@
 
             <!-- User Type -->
             <input type="hidden" name="user_type" value="consoler">
-            <!-- Status -->
-{{--            <input type="hidden" name="status" value="active">--}}
             <!-- Status -->
             <div class="mb-3 d-flex">
                 <label for="status" class="form-label col-sm-3">Status <span class="text-danger">*</span></label>
@@ -191,10 +189,13 @@
     window.onload = () => {
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-        document.querySelectorAll('input[type="date"]').forEach(input => input.value = formattedDate);
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            if (input.id !== 'billing_commencement_period') {
+                input.value = formattedDate;
+            }
+        });
     };
 </script>
-
 </body>
 @endsection
 </html>

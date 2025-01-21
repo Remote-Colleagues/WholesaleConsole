@@ -26,10 +26,10 @@
                     <tbody>
                         @foreach($users as $user)
                             <tr>
-                                <td>{{ $user->name }}</td>
+                                <td>{{ucwords(strtolower($user->name))}}</td>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->consoler->console_name ?? 'N/A' }}</td>
-                                <td>{{ $user->status?? 'No Status' }}</td>
+                                <td>{{ucwords(strtolower($user->consoler->console_name ?? 'N/A' ))}}</td>
+                                <td>{{ucwords(strtolower( $user->status?? 'No Status' ))}}</td>
                                 <td>
                                     <a href="{{ route('consoler.details', $user->id) }}" class="btn btn-info" style="background-color: #5271FF;">View Details</a>
                                 </td>

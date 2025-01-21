@@ -177,8 +177,13 @@
     window.onload = () => {
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-        document.querySelectorAll('input[type="date"]').forEach(input => input.value = formattedDate);
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            if (input.id !== 'billing_commencement_period') {
+                input.value = formattedDate;  // Auto-fill all date fields except the one for Billing Commencement Period
+            }
+        });
     };
+
 </script>
 
 </body>

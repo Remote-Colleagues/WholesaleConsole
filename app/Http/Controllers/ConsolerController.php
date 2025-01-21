@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Auctions;
+use App\Models\Invoice;
 use App\Models\User;
 use App\Models\Consoler;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ConsolerController extends Controller
@@ -71,7 +71,8 @@ class ConsolerController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'consoler', // Add a default user role for this type of user
+            'role' => 'consoler',
+            'user_type' => 'consoler',
         ]);
 
         // Store the Consoler data
@@ -132,6 +133,7 @@ class ConsolerController extends Controller
     {
         $user = User::findOrFail($id);
         $consoler = Consoler::where('user_id', $user->id)->firstOrFail();
+
         return view('consoler.update', compact('user', 'consoler'));
     }
 
@@ -257,6 +259,14 @@ class ConsolerController extends Controller
             'selectedAuctionName' => $filters['auction_name'] ?? null,
             'selectedLocation' => $filters['state'] ?? null,
         ]);
+    }
+    public function showInvoices()
+    {
+        $id = auth()->id();
+        $consolerInvoices = Invoice::where('user_id', $id)
+            ->where('status', '!=', 'hide')
+            ->paginate(6);
+        return view('consoler.invoice', compact('consolerInvoices'));
     }
 
 }

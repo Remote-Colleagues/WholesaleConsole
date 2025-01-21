@@ -20,9 +20,6 @@
         </a>
     </li>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
     <!-- Nav Item - Consolers -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('consoler.list') }}">
@@ -30,9 +27,6 @@
             <span>Consolers</span>
         </a>
     </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider">
 
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">
@@ -43,12 +37,12 @@
     </li>
 
     <!-- Nav Item - Upcoming Event -->
-    <!-- <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-calendar-alt"></i>
-            <span>Upcoming Event</span>
-        </a>
-    </li> -->
+{{--     <li class="nav-item">--}}
+{{--        <a class="nav-link" href="#">--}}
+{{--            <i class="fas fa-fw fa-calendar-alt"></i>--}}
+{{--            <span>Upcoming Event</span>--}}
+{{--        </a>--}}
+{{--    </li> --}}
 
     <!-- Nav Item - Promote your event -->
     <!-- <li class="nav-item">
@@ -59,12 +53,12 @@
     </li> -->
 
     <!-- Nav Item - Invoices -->
-    <!-- <li class="nav-item">
-        <a class="nav-link" href="#">
+    <li class="nav-item">
+        <a class="nav-link" href="{{route('invoices.index')}}">
             <i class="fas fa-fw fa-file-invoice"></i>
             <span>Invoices</span>
         </a>
-    </li> -->
+    </li>
 
     <!-- Nav Item - Username -->
     <!-- <li class="nav-item">

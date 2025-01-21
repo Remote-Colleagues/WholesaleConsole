@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +25,7 @@ Route::get('/consoler/edit/{id}', [ConsolerController::class, 'edit'])->name('co
 Route::put('/consoler/update/{id}', [ConsolerController::class, 'update'])->name('consoler.update');
 Route::get('/consoler/details/{id}', [ConsolerController::class, 'showdetail'])->name('consoler.profile');
 Route::get('car-auctions', [ConsolerController::class, 'showAllAuctions'])->name('auctions.car');
+Route::get('/all-consolers-invoices', [ConsolerController::class, 'showInvoices'])->name('invoices.show');
 
 Route::get('/consoler/dashboard', [ConsolerController::class, 'Dashboard'])->name('consoler.dashboard');
 
@@ -69,6 +71,12 @@ Route::get('partner/dashboard', function () {
 
     return redirect()->route('login.form')->with('error', 'You are not authorized to access this page.');
 })->name('partner.dashboard');
+Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
 
+Route::get('/invoices/pdf/{id}', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
+Route::put('invoices/{id}/update-status', [InvoiceController::class, 'updateInvoiceStatus'])->name('invoices.updateStatus');
+
+Route::get('/invoices/{id}/content', [InvoiceController::class, 'getInvoiceContent'])->name('invoices.content');
+Route::get('/invoices/filter', [InvoiceController::class, 'filter'])->name('invoices.fill');
 
 
