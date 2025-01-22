@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Log;
 class Auctions extends Model
 {
     use HasFactory;
-    protected $table = 'auctions';protected $fillable = [
+    protected $table = 'auctions';
+    protected $fillable = [
         'name',
         'make',
         'model',
@@ -26,7 +27,7 @@ class Auctions extends Model
         'state',
         'vin',
     ];
-    
+
 
     public static function totalcount()
     {

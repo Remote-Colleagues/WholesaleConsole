@@ -14,20 +14,16 @@
 
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800" style="pointer-events: none; user-select: none;">Dashboard</h1>
-
-    <!-- Content Row -->
     <div class="row">
+    <!-- Content column -->
+    <div class="col">
         <!-- Earnings (Monthly) Card Example -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"></div>
-                        </div>
                         <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            <i class="fas fa-car  text-black-50">Active Car Listing</i>
                         </div>
                     </div>
                 </div>
@@ -39,12 +35,8 @@
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1"></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"></div>
-                        </div>
                         <div class="col-auto">
-                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                            <i class="fas fa-house-user  text-blue-200">Auction House</i>
                         </div>
                     </div>
                 </div>
@@ -56,20 +48,20 @@
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1"></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"></div>
-                        </div>
                         <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                            <i class="fas fa-clipboard-list text-black-50"> Auction happing today</i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </div>
+            <!-- Map container -->
+            <div id="australia-map" style="height: 500px; width: 600px; margin: auto;"></div>
+    </div>
+</div>
 
-
-<!-- /.container-fluid -->
+    <!-- /.container-fluid -->
 @endsection
 
 @section('scripts')
@@ -80,4 +72,41 @@
 <!-- Page level custom scripts -->
 <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
 <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+
+
+
+<!-- Include Highcharts Scripts -->
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/mapdata/countries/au/au-all.js"></script>
+
+<script>
+    const mapData = @json($mapData);
+    Highcharts.mapChart('australia-map', {
+        chart: {
+            map: 'countries/au/au-all'
+        },
+        title: {
+            text: 'Active Cars by Region'
+        },
+        colorAxis: {
+            min: 0,
+            minColor: '#E0F7FA',
+            maxColor: '#00695C'
+        },
+        series: [{
+            data: mapData,
+            name: 'Active Cars',
+            states: {
+                hover: {
+                    color: '#FF7043'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}<br>Cars: {point.value}'
+            }
+        }]
+    });
+</script>
 @endsection
+

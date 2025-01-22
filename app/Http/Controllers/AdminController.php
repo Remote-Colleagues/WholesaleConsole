@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Auctions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -38,34 +39,43 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        if (session()->has('admin')) {
-            return view('admin.dashboard');
+        if (session()->has('is_admin') && session('is_admin')) {
+
+            $auctionData = Auctions::select('state', DB::raw('COUNT(*) as count'))
+                ->groupBy('state')
+                ->get();
+            $mapData = $auctionData->map(function ($item) {
+                return [
+                    'hc-key' => $this->getRegionKeyByLocation($item->state),
+                    'value' => $item->count,
+                    'name' => $item->state
+                ];
+            });
+            return view('admin.dashboard',compact('auctionData','mapData'));
         }
         return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
     }
 
-//    public function dashboard()
-//    {
-//        if (session()->has('is_admin') && session('is_admin')) {
-//            $user = session('user');
-//            return view('admin.dashboard', compact('user'));
-//        } elseif (session()->has('is_consoler') && session('is_consoler')) {
-//            $user = session('user');
-//            return view('consoler.dashboard', compact('user'));
-//        } elseif (session()->has('is_partner') && session('is_partner')) {
-//            $user = session('user');
-//            return view('partner.dashboard', compact('user'));
-//        }
-//
-//        // If no valid session is found, redirect to login
-//        return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
-//    }
+    private function getRegionKeyByLocation($state)
+    {
+        $locationMap = [
+            'NSW' => 'au-nsw',  // New South Wales
+            'VIC' => 'au-vic',  // Victoria
+            'WA' => 'au-wa',    // Western Australia (add more if necessary)
+            'NT' => 'au-nt',    // Northern Territory
+            'SA' => 'au-sa',    // South Australia
+            'QLD' => 'au-qld',  // Queensland
+            'TAS' => 'au-tas'   // Tasmania
+        ];
+
+        return $locationMap[$state] ?? null;  // Return null if no match
+    }
 
     public function consolerList()
     {
         $users = User::select('id', 'name', 'email','status') // Select only specific fields
         ->with('consoler')
-            ->where('user_type', 'consoler') // Filter by user_type
+            ->where('user_type', 'consoler')
             ->get();
         return view('admin.consolerlist', compact('users'));
     }
