@@ -95,11 +95,12 @@ class Auctions extends Model
     public function getDeadlineAttribute($value)
     {
         if ($value) {
-            return Carbon::parse($value)->format('y/m/d H:i:s');
+            return Carbon::parse($value)->format('Y/m/d H:i:s');
         }
-
+    
         return null;
     }
+    
 
 
 
