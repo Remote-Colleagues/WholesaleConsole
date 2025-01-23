@@ -55,4 +55,4 @@
 
 </div>
 
-@endsection <!-- End of content section -->
+@endsection 

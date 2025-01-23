@@ -42,8 +42,6 @@ class AdminController extends Controller
     return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
 }
 
-
-
     public function dashboard()
     {
         if (session()->has('admin')) {
@@ -68,18 +66,15 @@ class AdminController extends Controller
     }
     public function showAllAuctions(Request $request)
     {
-        // Retrieve the filter values from the query string
         $selectedMake = $request->query('make');
         $selectedModel = $request->query('model');
         $selectedBodyType = $request->query('body_type');
         $selectedBuildDate = $request->query('build_date');
         $selectedAuctionName = $request->query('auction_name');
         $selectedLocation = $request->query('location');
-
-        // Start the query
+    
         $query = Auctions::query();
-
-        // Apply filters if they are present
+    
         if ($selectedMake) {
             $query->where('make', $selectedMake);
         }
@@ -98,24 +93,32 @@ class AdminController extends Controller
         if ($selectedLocation) {
             $query->where('state', $selectedLocation);
         }
-
-        // Paginate the filtered results
-        $auctions = $query->paginate(30);
-
-        // Get unique makes, models, body types, build dates, etc.
+    
+        // Active Auctions: where the deadline is in the future
+        $activeAuctions = $query->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) > NOW()')
+            ->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%y/%m/%d %H:%i:%s') as formatted_deadline")
+            ->orderBy('formatted_deadline')
+            ->paginate(30);
+    
+        // Past Auctions: where the deadline is over or 0
+        $pastAuctions = $query->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) <= NOW()')
+            ->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%y/%m/%d %H:%i:%s') as formatted_deadline")
+            ->orderBy('formatted_deadline')
+            ->paginate(30);
+    
+        // Dropdown Filters for Make, Model, etc.
         $makes = Auctions::pluck('make')->unique();
         $models = Auctions::pluck('model')->unique();
         $bodyTypes = Auctions::pluck('body_type')->unique();
         $buildDates = Auctions::pluck('build_date')->unique();
         $auctionNames = Auctions::pluck('auctioneer')->unique();
         $locations = Auctions::pluck('state')->unique();
-
-        // Total count of auctions
+    
         $totalcount = Auctions::count();
-
-        // Pass the data to the view
+    
         return view('auctions.index', compact(
-            'auctions',
+            'activeAuctions',
+            'pastAuctions',
             'totalcount',
             'models',
             'makes',
@@ -131,30 +134,33 @@ class AdminController extends Controller
             'selectedLocation'
         ));
     }
+    
+    
     public function import(Request $request)
     {
         $request->validate([
             'csvFile' => 'required|mimes:csv,txt|max:2048',
         ]);
-    
+        
         $duplicateIdentifiers = [];
-    
+        
         try {
             $file = $request->file('csvFile');
             $data = array_map('str_getcsv', file($file->getRealPath()));
-    
-            $headers = array_map('trim', $data[0]); 
-            unset($data[0]); 
-    
+        
+            $headers = array_map('trim', $data[0]);
+            unset($data[0]);
+        
             foreach ($data as $row) {
                 $row = array_combine($headers, $row);
-    
+        
                 $uniqueIdentifier = $row['unique_identifier'] ?? null;
-                // Check if the unique_identifier exists in the database
                 $existingRecord = Auctions::where('unique_identifier', $uniqueIdentifier)->first();
-    
+        
+                $hours = isset($row['hours']) && is_numeric($row['hours']) ? (float)$row['hours'] : 0;
+                $deadline = $hours > 0 ? now()->addHours($hours) : now();
+            
                 if ($existingRecord) {
-                    // If the record exists, update it
                     $existingRecord->update([
                         'name' => $row['name'] ?? null,
                         'make' => $row['make'] ?? null,
@@ -166,7 +172,9 @@ class AdminController extends Controller
                         'transmission' => $row['transmission'] ?? null,
                         'seats' => $row['seats'] ?? null,
                         'auctioneer' => $row['auctioneer'] ?? null,
-                        'hours' => $row['hours'] ?? null,
+                        'hours' => $hours,
+                        'deadline' => $deadline,
+
                         'state' => $row['state'] ?? null,
                         'link_to_auction' => $row['link_to_auction'] ?? null,
                         'other_specs' => $row['other_specs'] ?? null,
@@ -174,20 +182,11 @@ class AdminController extends Controller
                         'auction_registration_link' => $row['auction_registration_link'] ?? null,
                         'current_market_retail' => $row['current_market_retail'] ?? null,
                     ]);
-    
-                    // Calculate and update the deadline
-                    $hours = $existingRecord->hours ?? 0; // Default to 0 if no hours are set
-                    $updatedAt = \Carbon\Carbon::parse($existingRecord->updated_at);
-                    $deadline = $updatedAt->addHours($hours)->toDateTimeString(); // Add hours to updated_at
-                    $existingRecord->update(['deadline' => $deadline]);
-    
-                    // Explicitly update the 'updated_at' column using touch()
-                    $existingRecord->touch();  // This will update 'updated_at'
-    
-                    // Add the duplicate identifier to the list
+        
+        
+        
                     $duplicateIdentifiers[] = $uniqueIdentifier;
                 } else {
-                    // If no record is found, create a new record
                     $newRecord = Auctions::create([
                         'unique_identifier' => $uniqueIdentifier,
                         'name' => $row['name'] ?? null,
@@ -200,7 +199,9 @@ class AdminController extends Controller
                         'transmission' => $row['transmission'] ?? null,
                         'seats' => $row['seats'] ?? null,
                         'auctioneer' => $row['auctioneer'] ?? null,
-                        'hours' => $row['hours'] ?? null,
+                        'hours' => $hours,
+                        'deadline' => $deadline,
+
                         'state' => $row['state'] ?? null,
                         'link_to_auction' => $row['link_to_auction'] ?? null,
                         'other_specs' => $row['other_specs'] ?? null,
@@ -208,22 +209,20 @@ class AdminController extends Controller
                         'auction_registration_link' => $row['auction_registration_link'] ?? null,
                         'current_market_retail' => $row['current_market_retail'] ?? null,
                     ]);
-    
-                    // Calculate and set the deadline for new records
-                    $hours = $newRecord->hours ?? 0; // Default to 0 if no hours are set
-                    $updatedAt = \Carbon\Carbon::parse($newRecord->updated_at);
-                    $deadline = $updatedAt->addHours($hours)->toDateTimeString(); // Add hours to updated_at
-                    $newRecord->update(['deadline' => $deadline]);
+        
+                   
+                    
                 }
             }
-    
-            // Redirect with the list of duplicates so we can show a modal or notification
+        
             return redirect()->route('auctions.index')->with('duplicates', $duplicateIdentifiers);
-    
+        
         } catch (\Exception $e) {
             return back()->with('error', 'Error uploading CSV file');
         }
     }
+    
+    
     
     
     
