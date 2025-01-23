@@ -15,15 +15,15 @@
 
 <style>
     /* Add this to your custom CSS file */
-.alert {
-    font-size: 1.1rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .alert {
+        font-size: 1.1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.alert .close {
-    font-size: 1.5rem;
-}
+    .alert .close {
+        font-size: 1.5rem;
+    }
 
     .small-filter {
         font-size: 0.75rem;
@@ -105,9 +105,9 @@
                 </button>
             </div>
         </div>
-    @endif
-    
-    @if (session('error'))
+        @endif
+
+        @if (session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <div class="d-flex align-items-center">
                 <i class="fas fa-exclamation-triangle mr-3" style="font-size: 1.5rem; color: darkred;"></i>
@@ -119,37 +119,37 @@
                 </button>
             </div>
         </div>
-    @endif
-    
-                <!-- Modal for CSV Upload -->
-                <div class="modal fade" id="uploadCSVModal" tabindex="-1" aria-labelledby="uploadCSVModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <form method="POST" action="{{ route('auctions.import') }}" enctype="multipart/form-data">
-                        @csrf
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="uploadCSVModalLabel">Upload CSV</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="csvFile" class="form-label">Choose CSV File</label>
-                                    <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Upload</button>
+        @endif
+
+        <!-- Modal for CSV Upload -->
+        <div class="modal fade" id="uploadCSVModal" tabindex="-1" aria-labelledby="uploadCSVModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form method="POST" action="{{ route('auctions.import') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="uploadCSVModalLabel">Upload CSV</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="csvFile" class="form-label">Choose CSV File</label>
+                                <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv"
+                                    required>
                             </div>
                         </div>
-                    </form>
-                   
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </div>
+                    </div>
+                </form>
 
-                </div>
+
             </div>
-    
+        </div>
+
 
         <div class="card-body">
             <ul class="nav nav-tabs" id="auctionTabs" role="tablist">
@@ -180,42 +180,51 @@
                         </thead>
                         <tbody>
                             @foreach ($activeAuctions as $auction)
-                                <tr data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}" 
-                                    aria-expanded="false" aria-controls="details-{{ $auction->id }}">
-                                    <td>{{ $auction->name }}</td>
-                                    <td>{{ $auction->make }}</td>
-                                    <td>{{ $auction->model }}</td>
-                                    <td>{{ $auction->formatted_deadline }}</td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">Expand</button>
-                                    </td>
-                                </tr>
-                                <tr class="collapse details-row" id="details-{{ $auction->id }}">
-                                    <td colspan="5">
-                                        <div class="details-container p-3 border rounded bg-light shadow-sm">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>Build Date:</strong> <span class="text-muted">{{ $auction->build_date }}</span></p>
-                                                    <p><strong>Odometer:</strong> <span class="text-muted">{{ $auction->odometer }}</span></p>
-                                                    <p><strong>Body Type:</strong> <span class="text-muted">{{ $auction->body_type }}</span></p>
-                                                    <p><strong>Fuel:</strong> <span class="text-muted">{{ $auction->fuel }}</span></p>
-                                                    <p><strong>Transmission:</strong> <span class="text-muted">{{ $auction->transmission }}</span></p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>Seats:</strong> <span class="text-muted">{{ $auction->seats }}</span></p>
-                                                    <p><strong>Auctioneer:</strong> <span class="text-muted">{{ $auction->auctioneer }}</span></p>
-                                                    <p><strong>State:</strong> <span class="text-muted">{{ $auction->state }}</span></p>
-                                                    <p><strong>VIN:</strong> <span class="text-muted">{{ $auction->vin }}</span></p>
-                                                    <p><strong>Link:</strong> 
-                                                        <a href="{{ $auction->link_to_auction }}" target="_blank" 
-                                                           class="text-primary text-decoration-underline">View Auction</a>
-                                                    </p>
-                                                </div>
+                            <tr data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}"
+                                aria-expanded="false" aria-controls="details-{{ $auction->id }}">
+                                <td>{{ $auction->name }}</td>
+                                <td>{{ $auction->make }}</td>
+                                <td>{{ $auction->model }}</td>
+                                <td>{{ $auction->formatted_deadline }}</td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm">Expand</button>
+                                </td>
+                            </tr>
+                            <tr class="collapse details-row" id="details-{{ $auction->id }}">
+                                <td colspan="5">
+                                    <div class="details-container p-3 border rounded bg-light shadow-sm">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Build Date:</strong> <span class="text-muted">{{
+                                                        $auction->build_date }}</span></p>
+                                                <p><strong>Odometer:</strong> <span class="text-muted">{{
+                                                        $auction->odometer }}</span></p>
+                                                <p><strong>Body Type:</strong> <span class="text-muted">{{
+                                                        $auction->body_type }}</span></p>
+                                                <p><strong>Fuel:</strong> <span class="text-muted">{{ $auction->fuel
+                                                        }}</span></p>
+                                                <p><strong>Transmission:</strong> <span class="text-muted">{{
+                                                        $auction->transmission }}</span></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Seats:</strong> <span class="text-muted">{{ $auction->seats
+                                                        }}</span></p>
+                                                <p><strong>Auctioneer:</strong> <span class="text-muted">{{
+                                                        $auction->auctioneer }}</span></p>
+                                                <p><strong>State:</strong> <span class="text-muted">{{ $auction->state
+                                                        }}</span></p>
+                                                <p><strong>VIN:</strong> <span class="text-muted">{{ $auction->vin
+                                                        }}</span></p>
+                                                <p><strong>Link:</strong>
+                                                    <a href="{{ $auction->link_to_auction }}" target="_blank"
+                                                        class="text-primary text-decoration-underline">View Auction</a>
+                                                </p>
                                             </div>
                                         </div>
-                                    </td>
-                                </tr>
-                                
+                                    </div>
+                                </td>
+                            </tr>
+
                             @endforeach
                         </tbody>
                     </table>
@@ -239,42 +248,51 @@
                         </thead>
                         <tbody>
                             @foreach ($pastAuctions as $auction)
-                                <tr data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}" 
-                                    aria-expanded="false" aria-controls="details-{{ $auction->id }}">
-                                    <td>{{ $auction->name }}</td>
-                                    <td>{{ $auction->make }}</td>
-                                    <td>{{ $auction->model }}</td>
-                                    <td>{{ $auction->formatted_deadline }}</td>
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">Expand</button>
-                                    </td>
-                                </tr>
-                                <tr class="collapse details-row" id="details-{{ $auction->id }}">
-                                    <td colspan="5">
-                                        <div class="details-container p-3 border rounded bg-light shadow-sm">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <p><strong>Build Date:</strong> <span class="text-muted">{{ $auction->build_date }}</span></p>
-                                                    <p><strong>Odometer:</strong> <span class="text-muted">{{ $auction->odometer }}</span></p>
-                                                    <p><strong>Body Type:</strong> <span class="text-muted">{{ $auction->body_type }}</span></p>
-                                                    <p><strong>Fuel:</strong> <span class="text-muted">{{ $auction->fuel }}</span></p>
-                                                    <p><strong>Transmission:</strong> <span class="text-muted">{{ $auction->transmission }}</span></p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p><strong>Seats:</strong> <span class="text-muted">{{ $auction->seats }}</span></p>
-                                                    <p><strong>Auctioneer:</strong> <span class="text-muted">{{ $auction->auctioneer }}</span></p>
-                                                    <p><strong>State:</strong> <span class="text-muted">{{ $auction->state }}</span></p>
-                                                    <p><strong>VIN:</strong> <span class="text-muted">{{ $auction->vin }}</span></p>
-                                                    <p><strong>Link:</strong> 
-                                                        <a href="{{ $auction->link_to_auction }}" target="_blank" 
-                                                           class="text-primary text-decoration-underline">View Auction</a>
-                                                    </p>
-                                                </div>
+                            <tr data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}"
+                                aria-expanded="false" aria-controls="details-{{ $auction->id }}">
+                                <td>{{ $auction->name }}</td>
+                                <td>{{ $auction->make }}</td>
+                                <td>{{ $auction->model }}</td>
+                                <td>{{ $auction->formatted_deadline }}</td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm">Expand</button>
+                                </td>
+                            </tr>
+                            <tr class="collapse details-row" id="details-{{ $auction->id }}">
+                                <td colspan="5">
+                                    <div class="details-container p-3 border rounded bg-light shadow-sm">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Build Date:</strong> <span class="text-muted">{{
+                                                        $auction->build_date }}</span></p>
+                                                <p><strong>Odometer:</strong> <span class="text-muted">{{
+                                                        $auction->odometer }}</span></p>
+                                                <p><strong>Body Type:</strong> <span class="text-muted">{{
+                                                        $auction->body_type }}</span></p>
+                                                <p><strong>Fuel:</strong> <span class="text-muted">{{ $auction->fuel
+                                                        }}</span></p>
+                                                <p><strong>Transmission:</strong> <span class="text-muted">{{
+                                                        $auction->transmission }}</span></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Seats:</strong> <span class="text-muted">{{ $auction->seats
+                                                        }}</span></p>
+                                                <p><strong>Auctioneer:</strong> <span class="text-muted">{{
+                                                        $auction->auctioneer }}</span></p>
+                                                <p><strong>State:</strong> <span class="text-muted">{{ $auction->state
+                                                        }}</span></p>
+                                                <p><strong>VIN:</strong> <span class="text-muted">{{ $auction->vin
+                                                        }}</span></p>
+                                                <p><strong>Link:</strong>
+                                                    <a href="{{ $auction->link_to_auction }}" target="_blank"
+                                                        class="text-primary text-decoration-underline">View Auction</a>
+                                                </p>
                                             </div>
                                         </div>
-                                    </td>
-                                </tr>
-                                
+                                    </div>
+                                </td>
+                            </tr>
+
                             @endforeach
                         </tbody>
                     </table>
