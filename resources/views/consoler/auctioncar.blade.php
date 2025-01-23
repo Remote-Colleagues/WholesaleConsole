@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('consoler.layouts.app')
 @section('headerTitle', 'Car at Auctions')
 @section('title', 'Auctions List')
 @section('content')
@@ -28,15 +28,6 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <button class="btn" style="color:#5271FF;font-weight: bold;">Reboot</button>
-                    <form id="csv-upload-form" action="{{ route('auctions.import') }}" method="POST" enctype="multipart/form-data" style="display: inline;">
-                        @csrf
-                        <a href="javascript:void(0);" class="btn btn-add" style="color:#5271FF; font-weight: bold;">Add</a>
-                        <input type="file" id="csv-upload" name="csv_file" style="display: none;" accept=".csv">
-                    </form>
-
-                    <button class="btn" style="color:#5271FF; font-weight: bold;">Remove</button>
-                    <button class="btn" style="color:#5271FF; font-weight: bold;">Download</button>
                 </div>
                 <div style="color: #5271FF">Total: <span>{{$totalcount}}</span></div>
             </div>

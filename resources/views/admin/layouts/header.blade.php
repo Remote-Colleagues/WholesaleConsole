@@ -1,15 +1,16 @@
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- FontAwesome for icons -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 <!-- Navbar -->
-<nav class="navbar navbar-expand navbar-light bg-blue topbar mb-3 static-top shadow " style="background-color: #5271FF;">
+<nav class="navbar navbar-expand navbar-light bg-blue topbar mb-3 static-top shadow ">
        <!-- Topbar Navbar -->
     <div class="container-fluid">
         <!-- Headers -->
         <div class="d-flex flex-column align-items-start">
             <!-- Primary Header -->
-            <span class="text-white font-weight-bold">
+            <span class=" font-weight-bold" style="color: #5271FF">
                 Wc Admin >
                 @yield('headerTitle', 'Dashboard')
             </span>
