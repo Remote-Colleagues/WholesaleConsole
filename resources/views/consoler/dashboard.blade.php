@@ -10,6 +10,11 @@
 @endsection
 
 @section('content')
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
     <!-- Begin Page Content -->
     <div class="container-fluid">
 

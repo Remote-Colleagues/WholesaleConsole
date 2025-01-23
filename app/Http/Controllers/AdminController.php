@@ -72,15 +72,12 @@ class AdminController extends Controller
         return $locationMap[$state] ?? null;  // Return null if no match
     }
 
-  
+
     public function consolerList()
     {
-        // $consolers = User::where('user_type', 'consoler')->get();
-        // $consolers = Consoler::all();
-
-
-        $users = User::select('id', 'name', 'email') // Select only specific fields
-            ->with('consoler') // Load related consoler data
+        $users = User::select('id', 'name', 'email' ,'status')
+            ->where('user_type', 'consoler')
+            ->with('consoler')
             ->get();
 
         return view('admin.consolerlist', compact('users'));
@@ -162,23 +159,23 @@ class AdminController extends Controller
 
         $duplicateIdentifiers = [];
         $newIdentifiers = [];
-    
+
         try {
             $file = $request->file('csvFile');
             $data = array_map('str_getcsv', file($file->getRealPath()));
-    
+
             $headers = array_map('trim', $data[0]);
             unset($data[0]);
-    
+
             foreach ($data as $row) {
                 $row = array_combine($headers, $row);
 
                 $uniqueIdentifier = $row['unique_identifier'] ?? null;
                 $existingRecord = Auctions::where('unique_identifier', $uniqueIdentifier)->first();
-    
+
                 $hours = isset($row['hours']) && is_numeric($row['hours']) ? (float)$row['hours'] : 0;
                 $deadline = $hours > 0 ? now()->addHours($hours) : now();
-    
+
                 if ($existingRecord) {
                     // Update the existing record
                     $existingRecord->update([
@@ -201,7 +198,7 @@ class AdminController extends Controller
                         'auction_registration_link' => $row['auction_registration_link'] ?? null,
                         'current_market_retail' => $row['current_market_retail'] ?? null,
                     ]);
-    
+
                     $duplicateIdentifiers[] = $uniqueIdentifier;
                 } else {
                     // Insert new record
@@ -226,11 +223,11 @@ class AdminController extends Controller
                         'auction_registration_link' => $row['auction_registration_link'] ?? null,
                         'current_market_retail' => $row['current_market_retail'] ?? null,
                     ]);
-    
+
                     $newIdentifiers[] = $uniqueIdentifier;
                 }
             }
-    
+
             // Flash message for updated and inserted records
             $message = '';
             if (count($duplicateIdentifiers) > 0) {
@@ -239,12 +236,12 @@ class AdminController extends Controller
             if (count($newIdentifiers) > 0) {
                 $message .= 'New Auctions: ' . implode(', ', $newIdentifiers) . '.';
             }
-    
+
             return redirect()->route('auctions.index')->with('message', $message);
         } catch (\Exception $e) {
             return back()->with('error', 'Error uploading CSV file');
         }
     }
-    
+
 
 }

@@ -14,7 +14,7 @@
 
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800" style="pointer-events: none; user-select: none;">Dashboard</h1>
-    <div class="row">
+    <div class="row-2">
     <!-- Content column -->
     <div class="col">
         <!-- Earnings (Monthly) Card Example -->
@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col-auto">
-                            <i class="fas fa-car  text-black-50">Active Car Listing</i>
+                            <i class="fas fa-car  text-black-50">Active Car Listing </i>
                         </div>
                     </div>
                 </div>
@@ -90,15 +90,15 @@
         },
         colorAxis: {
             min: 0,
-            minColor: '#E0F7FA',
-            maxColor: '#00695C'
+            minColor: '#5271FF',
+            maxColor: '#5271FF'
         },
         series: [{
             data: mapData,
             name: 'Active Cars',
             states: {
                 hover: {
-                    color: '#FF7043'
+                    color: '#5271FF'
                 }
             },
             dataLabels: {

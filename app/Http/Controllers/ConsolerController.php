@@ -86,7 +86,7 @@ class ConsolerController extends Controller
             'post_code' => $request->post_code,
             'your_agreement' => $agreementFullPath,
             'billing_commencement_period' => $request->billing_commencement_period,
-            'currency' => 'AUD', 
+            'currency' => 'AUD',
             'establishment_fee' => $request->establishment_fee,
             'establishment_fee_date' => $request->establishment_fee_date,
             'monthly_subscription_fee' => $request->monthly_subscription_fee,
@@ -109,21 +109,34 @@ class ConsolerController extends Controller
     public function show($id)
     {
         $user = User::where('id', $id)
-            // ->where('role', 'consoler')
+//             ->where('user_type', 'consoler')
             ->with('consoler')
             ->firstOrFail();
         return view('admin.consolerDetails', compact('user'));
     }
 
+//    public function showdetail($id)
+//    {
+//        $user = User::where('id', $id)
+// //           ->where('status','active')
+//            ->with('consoler')
+//            ->firstOrFail();
+//
+//        // Return the consoler details view with the user data
+//        return view('consoler.consolerDetails', compact('user'));
+//    }
     public function showdetail($id)
     {
         $user = User::where('id', $id)
-            ->with('consoler') // Assuming you have a consoler relationship defined
-            ->firstOrFail();
-
-        // Return the consoler details view with the user data
-        return view('consoler.consolerDetails', compact('user'));
+            ->with('consoler')
+            ->first();
+        if ($user && $user->status === 'active') {
+            return view('consoler.consolerDetails', compact('user'));
+        } else {
+            return redirect()->back()->with('error', 'Your account is inactive. Please contact our admin at 9855465165 to see your profile.');
+        }
     }
+
     public function edit($id)
     {
         $user = User::findOrFail($id);
