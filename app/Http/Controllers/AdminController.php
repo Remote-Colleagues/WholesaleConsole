@@ -65,6 +65,7 @@ class AdminController extends Controller
 
         return view('admin.consolerlist', compact('users'));
     }
+    
     public function showAllAuctions(Request $request)
     {
         $selectedMake = $request->query('make');

@@ -21,6 +21,20 @@
         body{
             font-family: 'Josefin Sans', sans-serif !important;
         }
+
+        /* Make header fixed and sticky */
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1030; /* Ensure it's above other content */
+            background-color: white; /* Add background color to avoid transparency */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Optional: Add shadow to make it stand out */
+        }
+
+      
     </style>
 
     @yield('styles')
@@ -30,7 +44,7 @@
         @include('admin.layouts.navigate')
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                @include('admin.layouts.header')
+                @include('admin.layouts.header', ['class' => 'header-fixed']) <!-- Add fixed class -->
                 @yield('content')
             </div>
             @include('admin.layouts.footer')
