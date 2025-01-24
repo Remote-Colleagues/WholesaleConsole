@@ -10,8 +10,8 @@
         <!-- Headers -->
         <div class="d-flex flex-column align-items-start">
             <!-- Primary Header -->
-            <span class=" font-weight-bold" style="color: #5271FF">
-                Wc Admin >
+            <span class=" font-weight-bold ml-4" style="color: #5271FF">
+                    Wc Admin >
                 @yield('headerTitle', 'Dashboard')
             </span>
 

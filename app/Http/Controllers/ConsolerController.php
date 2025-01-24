@@ -30,7 +30,6 @@ class ConsolerController extends Controller
 
         return redirect()->route('login.form')->with('error', 'You must be logged in as a consoler to access the dashboard.');
     }
-
     public function store(Request $request)
     {
         // Validate the incoming data
@@ -115,27 +114,16 @@ class ConsolerController extends Controller
         return view('admin.consolerDetails', compact('user'));
     }
 
-//    public function showdetail($id)
-//    {
-//        $user = User::where('id', $id)
-// //           ->where('status','active')
-//            ->with('consoler')
-//            ->firstOrFail();
-//
-//        // Return the consoler details view with the user data
-//        return view('consoler.consolerDetails', compact('user'));
-//    }
     public function showdetail($id)
     {
         $user = User::where('id', $id)
             ->with('consoler')
-            ->first();
-        if ($user && $user->status === 'active') {
-            return view('consoler.consolerDetails', compact('user'));
-        } else {
-            return redirect()->back()->with('error', 'Your account is inactive. Please contact our admin at 9855465165 to see your profile.');
-        }
+            ->firstOrFail();
+
+        // Return the consoler details view with the user data
+        return view('consoler.consolerDetails', compact('user'));
     }
+
 
     public function edit($id)
     {

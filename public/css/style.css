@@ -1,6 +1,6 @@
 #accordionSidebar {
-    background: url('/img/img.png') no-repeat center center;
-    /* background: #FFFFFF; */
+    /*background: url('/img/img.png') no-repeat center center;*/
+     background: #FFFFFF;
     background-size: cover;
     height: auto;  /* Ensures the sidebar stretches vertically to fill the screen */
 }

@@ -19,7 +19,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-4 text-gray-800" style="pointer-events: none; user-select: none;">Dashboard</h1>
+        <h1 class="h3 ml-3 mb-4" style="pointer-events: none; user-select: none; color: #5271FF;"> Dashboard</h1>
 
         <!-- Content Row -->
         <div class="row">
