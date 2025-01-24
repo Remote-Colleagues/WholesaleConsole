@@ -31,7 +31,7 @@ class Auctions extends Model
         'deadline', 
 
     ];
-    
+
 
     public static function totalcount()
     {

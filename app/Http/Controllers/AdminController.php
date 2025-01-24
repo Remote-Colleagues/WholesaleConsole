@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Auctions;
-use App\Models\Consoler;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 
 
@@ -34,25 +32,47 @@ class AdminController extends Controller
             'banking_detail' => 'nullable|string',
         ]);
 
-        $validated['change_password'] = Hash::make($validated['change_password']);
-
-        $admin = Admin::create($validated);
-
-        session(['admin' => $admin]);
-
-        return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
-    }
+    $validated['change_password'] = Hash::make($validated['change_password']);
+    $admin = Admin::create($validated);
+    session(['admin' => $admin]);
+    return redirect()->route('admin.dashboard')->with('success', 'Admin registered and logged in successfully!');
+}
 
     public function dashboard()
     {
-        if (session()->has('admin')) {
-            return view('admin.dashboard');
-        }
+        if (session()->has('is_admin') && session('is_admin')) {
 
+            $auctionData = Auctions::select('state', DB::raw('COUNT(*) as count'))
+                ->groupBy('state')
+                ->get();
+            $mapData = $auctionData->map(function ($item) {
+                return [
+                    'hc-key' => $this->getRegionKeyByLocation($item->state),
+                    'value' => $item->count,
+                    'name' => $item->state
+                ];
+            });
+            return view('admin.dashboard',compact('auctionData','mapData'));
+        }
         return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
     }
 
+    private function getRegionKeyByLocation($state)
+    {
+        $locationMap = [
+            'NSW' => 'au-nsw',  // New South Wales
+            'VIC' => 'au-vic',  // Victoria
+            'WA' => 'au-wa',    // Western Australia (add more if necessary)
+            'NT' => 'au-nt',    // Northern Territory
+            'SA' => 'au-sa',    // South Australia
+            'QLD' => 'au-qld',  // Queensland
+            'TAS' => 'au-tas'   // Tasmania
+        ];
 
+        return $locationMap[$state] ?? null;  // Return null if no match
+    }
+
+  
     public function consolerList()
     {
         // $consolers = User::where('user_type', 'consoler')->get();
@@ -65,7 +85,6 @@ class AdminController extends Controller
 
         return view('admin.consolerlist', compact('users'));
     }
-    
     public function showAllAuctions(Request $request)
     {
         $selectedMake = $request->query('make');
@@ -139,7 +158,7 @@ class AdminController extends Controller
         $request->validate([
             'csvFile' => 'required|mimes:csv,txt|max:2048',
         ]);
-    
+
         $duplicateIdentifiers = [];
         $newIdentifiers = [];
     
@@ -152,7 +171,7 @@ class AdminController extends Controller
     
             foreach ($data as $row) {
                 $row = array_combine($headers, $row);
-    
+
                 $uniqueIdentifier = $row['unique_identifier'] ?? null;
                 $existingRecord = Auctions::where('unique_identifier', $uniqueIdentifier)->first();
     

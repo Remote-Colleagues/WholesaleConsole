@@ -1,17 +1,13 @@
-@extends('admin.layouts.app')
-@section('headerTitle', 'Consoler Details')
+@extends('consoler.layouts.app')
+@section('headerTitle', 'your Details')
 
 @section('content')
 
 <div class="container-fluid">
-
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background-color: #5271FF; color: #fff;">
-            <h6 class="m-0 font-weight-bold">Consoler Details</h6>
-            <div class="d-flex justify-content-end">
-                <a href="{{ route('consoler.list') }}" class="btn btn-light btn-sm me-2">Back to List</a>
-                <a href="{{ route('consoler.edit', $user->id) }}" class="btn btn-light btn-sm" >Edit</a>
-            </div>
+            <h6 class="m-0 font-weight-bold">your Details</h6>
+
         </div>
 
         <div class="card-body">
