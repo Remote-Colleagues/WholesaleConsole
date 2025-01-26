@@ -6,11 +6,11 @@
 <div class="container-fluid">
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background-color: #5271FF; color: #fff;">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center" style="color: #5271FF;">
             <h6 class="m-0 font-weight-bold">Consoler Details</h6>
             <div class="d-flex justify-content-end">
-                <a href="{{ route('consoler.list') }}" class="btn btn-light btn-sm me-2">Back to List</a>
-                <a href="{{ route('consoler.edit', $user->id) }}" class="btn btn-light btn-sm" >Edit</a>
+                <a href="{{ route('consoler.list') }}" class="btn btn-light btn-sm me-2 " style="color: #5271FF;">Back to List</a>
+                <a href="{{ route('consoler.edit', $user->id) }}" class="btn btn-light btn-sm" style="color: #5271FF;" >Edit</a>
             </div>
         </div>
 
@@ -19,7 +19,7 @@
                 <!-- Basic Information -->
                 <div class="col-lg-4 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header text-white" style="background-color: #5271FF;">
+                        <div class="card-header " style="color: #5271FF;">
                             <h5><i class="fas fa-user"></i> Basic Information</h5>
                         </div>
                         <div class="card-body">
@@ -35,7 +35,7 @@
                 <!-- Console Information -->
                 <div class="col-lg-4 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header text-white" style="background-color:#5271FF;">
+                        <div class="card-header " style="color:#5271FF;">
                             <h5><i class="fas fa-laptop"></i> Console Details</h5>
                         </div>
                         <div class="card-body">
@@ -52,7 +52,7 @@
                 <!-- Address Information (Optional, kept in same row) -->
                 <div class="col-lg-4 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header text-white" style="background-color:#5271FF;">
+                        <div class="card-header " style="color:#5271FF;">
                             <h5><i class="fas fa-map-marker-alt"></i> Address Details</h5>
                         </div>
                         <div class="card-body">
@@ -70,7 +70,7 @@
 
             <!-- Financial Information (In a Single Column) -->
             <div class="card shadow-sm">
-                <div class="card-header text-white" style="background-color:#5271FF;">
+                <div class="card-header" style="color:#5271FF;">
                     <h5><i class="fas fa-credit-card"></i> Financial Information</h5>
                 </div>
                 <div class="card-body">
@@ -78,7 +78,7 @@
                         <li class="list-group-item">
                             <strong>Your Agreement:</strong>
                             @if($user->consoler && $user->consoler->your_agreement)
-                                <a href="{{ Storage::url($user->consoler->your_agreement) }}" class="btn btn-success" style="background-color: #5271FF" target="_blank">
+                                <a href="{{ Storage::url($user->consoler->your_agreement) }}" class="btn " style="color: #5271FF" target="_blank">
                                     <i class="fas fa-file-pdf"></i> View Agreement
                                 </a>
                             @else

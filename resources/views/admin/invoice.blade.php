@@ -45,7 +45,7 @@
                                                 <option value="pending" {{ $invoice->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                                 <option value="hide" {{ $invoice->status == 'hide' ? 'selected' : '' }}>Hide</option>
                                             </select>
-                                            <span class="arrow" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: #5271FF;">&#9660;</span>
+                                            <span class="arrow" style="position: absolute; top: 50%; right:25%; transform: translateY(-50%); color: #5271FF;">&#9660;</span>
                                         </div>
 
                                     </form>

@@ -33,8 +33,8 @@
                                 <td>{{ number_format($invoice->amount, 2) }}</td>
                                 <td>{{ ucwords(strtolower($invoice->status ?? 'No Status')) }}</td>
                                 <td>
-                                    <a href="{{ route('invoices.pdf', $invoice->id) }}" class="btn btn-info">Download</a>
-                                    <button type="button" class="btn btn-info view-invoice-btn" data-invoice-id="{{ $invoice->id }}">View</button>
+                                    <a href="{{ route('invoices.pdf', $invoice->id) }}" class="btn border-2" style="color:#5271FF; border-color: #5271FF">Download</a>
+                                    <button type="button" class="btn border-2 view-invoice-btn"  style="color:#5271FF; border-color: #5271FF" data-invoice-id="{{ $invoice->id }}">View</button>
                                 </td>
                             </tr>
                         @endforeach

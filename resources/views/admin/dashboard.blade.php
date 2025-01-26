@@ -17,7 +17,7 @@
 
         <div class="row">
             <!-- Left Column (Cards) -->
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <!-- Earnings (Monthly) Card Example -->
                 <div class="col-xl-6 col-md-12 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
@@ -62,8 +62,8 @@
             </div>
 
             <!-- Right Column (Map) -->
-            <div class="col-md-6">
-                <div id="australia-map" style="height: 500px; width: 100%;"></div>
+            <div class="col-md-7">
+                <div id="australia-map" style="height: 500px; width: 80%;"></div>
             </div>
         </div>
     </div>
