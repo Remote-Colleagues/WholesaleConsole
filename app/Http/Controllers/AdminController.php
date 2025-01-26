@@ -87,15 +87,18 @@ class AdminController extends Controller
     }
     public function showAllAuctions(Request $request)
     {
+        // Get filter parameters from the query string
         $selectedMake = $request->query('make');
         $selectedModel = $request->query('model');
         $selectedBodyType = $request->query('body_type');
         $selectedBuildDate = $request->query('build_date');
         $selectedAuctionName = $request->query('auction_name');
         $selectedLocation = $request->query('location');
-
+    
+        // Initialize the query
         $query = Auctions::query();
-
+    
+        // Apply filters to the query
         if ($selectedMake) {
             $query->where('make', $selectedMake);
         }
@@ -114,26 +117,35 @@ class AdminController extends Controller
         if ($selectedLocation) {
             $query->where('state', $selectedLocation);
         }
-
-        $activeAuctions = $query->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) > NOW()')
+    
+        // Clone the query for active and past auctions
+        $activeAuctionsQuery = clone $query;
+        $pastAuctionsQuery = clone $query;
+    
+        // Active auctions: Only those whose deadline is in the future
+        $activeAuctions = $activeAuctionsQuery->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) > NOW()')
             ->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%Y/%m/%d %H:%i:%s') as formatted_deadline")
             ->orderBy('formatted_deadline')
-            ->paginate(30);
-
-        $pastAuctions = $query->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) <= NOW()')
+            ->paginate(30);  // Pagination for active auctions
+    
+        // Past auctions: Only those whose deadline has passed
+        $pastAuctions = $pastAuctionsQuery->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) <= NOW()')
             ->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%Y/%m/%d %H:%i:%s') as formatted_deadline")
-            ->orderBy('formatted_deadline')
-            ->paginate(30);
-
+            ->orderBy('formatted_deadline', 'desc')
+            ->paginate(30);  // Pagination for past auctions
+    
+        // Fetch unique values for filters
         $makes = Auctions::pluck('make')->unique();
         $models = Auctions::pluck('model')->unique();
         $bodyTypes = Auctions::pluck('body_type')->unique();
         $buildDates = Auctions::pluck('build_date')->unique();
         $auctionNames = Auctions::pluck('auctioneer')->unique();
         $locations = Auctions::pluck('state')->unique();
-
+    
+        // Count of total auctions
         $totalcount = Auctions::count();
-
+    
+        // Return the view with the necessary data
         return view('auctions.index', compact(
             'activeAuctions',
             'pastAuctions',
@@ -152,6 +164,7 @@ class AdminController extends Controller
             'selectedLocation'
         ));
     }
+    
 
     public function import(Request $request)
     {
@@ -245,5 +258,69 @@ class AdminController extends Controller
         }
     }
     
+    public function edit($id)
+{
+    $auction = Auctions::findOrFail($id);
+    $makes = Auctions::pluck('make')->unique();
+    $models = Auctions::pluck('model')->unique();
+    $bodyTypes = Auctions::pluck('body_type')->unique();
+    $buildDates = Auctions::pluck('build_date')->unique();
+    $locations = Auctions::pluck('state')->unique();
+    $auctionNames = Auctions::pluck('auctioneer')->unique();
+
+    return view('auctions.edit', compact('auction', 'makes', 'models', 'bodyTypes', 'buildDates', 'locations', 'auctionNames'));
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'make' => 'required|string|max:255',
+        'model' => 'required|string|max:255',
+        'build_date' => 'nullable|date',
+        'odometer' => 'nullable|integer',
+        'body_type' => 'nullable|string|max:255',
+        'fuel' => 'nullable|string|max:255',
+        'transmission' => 'nullable|string|max:255',
+        'seats' => 'nullable|integer',
+        'auctioneer' => 'nullable|string|max:255',
+        'hours' => 'nullable|numeric|min:0', // Ensure hours is numeric in validation
+        'state' => 'nullable|string|max:255',
+        'link_to_auction' => 'nullable|url',
+        'vin' => 'nullable|string|max:255',
+        'auction_registration_link' => 'nullable|url',
+        'current_market_retail' => 'nullable|numeric',
+    ]);
+
+    $auction = Auctions::findOrFail($id);
+
+    // Get hours as a string and cast it to numeric for deadline calculation
+    $hours = $request->input('hours', '0');
+    $numericHours = is_numeric($hours) ? (float) $hours : 0;
+    $deadline = $numericHours > 0 ? now()->addHours($numericHours) : now();
+
+    $auction->update([
+        'name' => $request->input('name'),
+        'make' => $request->input('make'),
+        'model' => $request->input('model'),
+        'build_date' => $request->input('build_date') ? \Carbon\Carbon::parse($request->input('build_date')) : null,
+        'odometer' => $request->input('odometer'),
+        'body_type' => $request->input('body_type'),
+        'fuel' => $request->input('fuel'),
+        'transmission' => $request->input('transmission'),
+        'seats' => $request->input('seats'),
+        'auctioneer' => $request->input('auctioneer'),
+        'hours' => $hours, // Keep hours as string in the database
+        'deadline' => $deadline,
+        'state' => $request->input('state'),
+        'link_to_auction' => $request->input('link_to_auction'),
+        'vin' => $request->input('vin'),
+        'auction_registration_link' => $request->input('auction_registration_link'),
+        'current_market_retail' => $request->input('current_market_retail'),
+    ]);
+
+    return redirect()->route('auctions.index')->with('message', 'Auction updated successfully.');
+}
+
 
 }

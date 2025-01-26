@@ -189,6 +189,12 @@
                                 <td>
                                     <button class="btn btn-outline-primary btn-sm">Expand</button>
                                 </td>
+                                <td>
+                                    <a href="{{ route('auctions.edit', $auction->id) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </td>
+                                
                             </tr>
                             <tr class="collapse details-row" id="details-{{ $auction->id }}">
                                 <td colspan="5">
@@ -226,10 +232,11 @@
                             </tr>
 
                             @endforeach
+                   
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-center">
-                        {{ $activeAuctions->links('pagination::bootstrap-5') }}
+                        {{ $activeAuctions->links() }}
                     </div>
                 </div>
 
@@ -257,7 +264,10 @@
                                 <td>
                                     <button class="btn btn-outline-primary btn-sm">Expand</button>
                                 </td>
+                              
+                                
                             </tr>
+                            
                             <tr class="collapse details-row" id="details-{{ $auction->id }}">
                                 <td colspan="5">
                                     <div class="details-container p-3 border rounded bg-light shadow-sm">
@@ -297,7 +307,7 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-center">
-                        {{ $pastAuctions->links('pagination::bootstrap-5') }}
+                        {{ $pastAuctions->links() }}
                     </div>
                 </div>
             </div>

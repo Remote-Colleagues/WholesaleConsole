@@ -49,21 +49,7 @@ class Auctions extends Model
         }
         return $query;
     }
-    // public function getDeadlineAttribute()
-    // {
-    //     if (!$this->updated_at || !$this->hours) {
-    //         return null;
-    //     }
-    
-    //     // Calculate the deadline
-    //     $updatedAt = Carbon::parse($this->updated_at);
-    //     $deadline = $updatedAt->addHours($this->hours);
-    
-    //     return $deadline->format('y/m/d H:i:s'); // Format as YY/MM/DD HH:MM:SS
-    // }
-        /**
-     * Boot method to calculate deadline during create/update
-     */
+  
     protected static function boot()
     {
         parent::boot();
