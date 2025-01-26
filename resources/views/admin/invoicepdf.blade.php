@@ -19,7 +19,7 @@
     <div class="row mb-4">
         <div class="col">
             <h6 class="fw-bold">Invoice Issued by:</h6>
-            <p class="mb-0">ABN Number: {{ $abn }}</p>
+            <p class="mb-0"> {{ $accountHolder }}:{{$abn_number}}</p>
             <p>Issued on: {{ \Carbon\Carbon::parse($invoice->date_created)->format('d M, Y') }}</p>
         </div>
     </div>
@@ -30,7 +30,7 @@
             <h6 class="fw-bold">Invoice Issued to:</h6>
             <p class="mb-0">{{ $invoice->consoler_name }}</p>
             <p class="mb-0">{{ $contactEmail }}</p>
-            <p>{{ $invoice->consoler_address ?? 'N/A' }}</p>
+            <p>{{ $address ?? 'N/A' }}</p>
         </div>
     </div>
 
@@ -38,14 +38,22 @@
     <div class="row mb-4">
         <div class="col">
             <h6 class="fw-bold">Charges</h6>
+            @if ($totalAmount > $subscriptionFee)
+                <div class="d-flex justify-content-between">
+                    <span>Charge 1: Monthly Subscription Fee</span>
+                    <span>${{ number_format($subscriptionFee, 2) }}</span>
+                </div>
             <div class="d-flex justify-content-between">
-                <span>Charge 1: Establishment Fee</span>
+                <span>Charge 2: Establishment Fee</span>
                 <span>${{ number_format($establishmentFee, 2) }}</span>
             </div>
-            <div class="d-flex justify-content-between">
-                <span>Charge 2: Monthly Subscription Fee</span>
-                <span>${{ number_format($subscriptionFee, 2) }}</span>
-            </div>
+
+            @else
+                <div class="d-flex justify-content-between">
+                    <span>Charge: Monthly Subscription Fee</span>
+                    <span>${{ number_format($subscriptionFee, 2) }}</span>
+                </div>
+            @endif
             <div class="d-flex justify-content-between border-top pt-2 mt-2">
                 <span class="fw-bold">Total</span>
                 <span class="fw-bold">${{ number_format($totalAmount, 2) }}</span>
@@ -57,8 +65,8 @@
     <div class="row mt-5">
         <div class="col">
             <h6 class="fw-bold">Contact & Payment Details</h6>
-            <p class="mb-0">Email: {{ $contactEmail }}</p>
-            <p class="mb-0">Phone: {{ $contactPhone }}</p>
+            <p class="mb-0">Email: {{ $email }}</p>
+            <p class="mb-0">Phone: {{ $Phone }}</p>
             <p class="mb-0">BSB: {{ $bsb }}</p>
             <p class="mb-0">Account Number: {{ $accountNumber }}</p>
             <p>Account Holder: {{ $accountHolder }}</p>

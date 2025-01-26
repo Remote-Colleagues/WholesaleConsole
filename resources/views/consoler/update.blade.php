@@ -101,7 +101,7 @@
                 <label for="your_agreement" class="form-label col-sm-3">Your Agreement <span class="text-danger">*</span></label>
                 <input type="file" class="form-control form-control-sm col-sm-3" id="your_agreement" name="your_agreement" accept="application/pdf">
                 @if($consoler->your_agreement)
-                    <a href="{{ asset('storage/' . $consoler->your_agreement) }}" class="btn btn-info btn-sm" style="background-color: #5271FF; color: white" target="_blank">View Old Agreement</a>
+                    <a href="{{ asset('storage/' . $consoler->your_agreement) }}" class="btn  btn-sm border-2" style="color: #5271FF; border-color: #5271FF " target="_blank">View Old Agreement</a>
                 @endif
             </div>
 

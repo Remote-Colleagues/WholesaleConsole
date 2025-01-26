@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Auctions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,6 +14,84 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    public function show()
+    {
+        $admin = Admin::with('user')->where('user_id', auth()->id())->firstOrFail();
+        return view('admin.profile', ['admin' => $admin, 'user' => $admin->user]);
+    }
+
+    public function edit($id)
+    {
+        $admin = Admin::findOrFail($id);
+        $user = User::findOrFail($admin->user_id);
+
+        return view('admin.edit', compact('admin', 'user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Find the admin record and the associated user
+        $admin = Admin::findOrFail($id);
+        $user = $admin->user;
+
+        // Validation for updating the admin profile and user email
+            $validatedData=$request->validate([
+            'name' => 'required|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'contact_phone_number' => 'nullable|string|max:20',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'abn_number' => 'nullable|string|max:50',
+            'banking_detail' => 'nullable|string|max:255',
+            'bsb_number' => 'nullable|string|max:20',
+            'terms_conditions_wc_partners' => 'nullable|file|mimes:pdf|max:10240',
+            'terms_conditions_wc_consolers' => 'nullable|file|mimes:pdf|max:10240',
+            'privacy_policy_for_all' => 'nullable|file|mimes:pdf|max:10240',
+            'master_agreement_for_wconsoler' => 'nullable|file|mimes:pdf|max:10240',
+            'master_agreement_for_partners' => 'nullable|file|mimes:pdf|max:10240',
+        ]);
+
+        // Update admin details
+        $admin->update([
+            'name' => $validatedData['name'],
+            'contact_person' => $validatedData['contact_person'] ?? $admin->contact_person,
+            'contact_phone_number' => $validatedData['contact_phone_number'] ?? $admin->contact_phone_number,
+            'abn_number' => $validatedData['abn_number'] ?? $admin->abn_number,
+            'banking_detail' => $validatedData['banking_detail'] ?? $admin->banking_detail,
+            'bsb_number' => $validatedData['bsb_number'] ?? $admin->bsb_number,
+        ]);
+
+        // Update user details (email)
+        $user->update(['email' => $request->email]);
+
+        // Handle file uploads
+        if ($request->hasFile('terms_conditions_wc_partners')) {
+            $admin->terms_conditions_wc_partners = $request->file('terms_conditions_wc_partners')->store('term', 'public');
+        }
+
+        if ($request->hasFile('terms_conditions_wc_consolers')) {
+            $admin->terms_conditions_wc_consolers = $request->file('terms_conditions_wc_consolers')->store('term', 'public');
+        }
+
+        if ($request->hasFile('privacy_policy_for_all')) {
+            $admin->privacy_policy_for_all = $request->file('privacy_policy_for_all')->store('term', 'public');
+        }
+
+        if ($request->hasFile('master_agreement_for_wconsoler')) {
+            $admin->master_agreement_for_wconsoler = $request->file('master_agreement_for_wconsoler')->store('term', 'public');
+        }
+
+        if ($request->hasFile('master_agreement_for_partners')) {
+            $admin->master_agreement_for_partners = $request->file('master_agreement_for_partners')->store('term', 'public');
+        }
+
+        // Save the admin record after updating
+        $admin->save();
+
+        // Redirect back with success message
+        return redirect()->route('admin.profile', $admin->id)->with('success', 'Profile updated successfully.');
+    }
+
+
     public function create()
     {
         return view('admin.reg');
@@ -52,7 +131,9 @@ class AdminController extends Controller
                     'name' => $item->state
                 ];
             });
-            return view('admin.dashboard',compact('auctionData','mapData'));
+            $user = User::find(auth()->user()->id);
+
+            return view('admin.dashboard',compact('auctionData','mapData','user'));
         }
         return redirect()->route('login.form')->with('error', 'You must be logged in to access the dashboard');
     }

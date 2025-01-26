@@ -61,12 +61,12 @@
     </li>
 
     <!-- Nav Item - Username -->
-    <!-- <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-fw fa-user"></i>
-            <span>Username</span>
+     <li class="nav-item">
+        <a class="nav-link" style="color:#5271FF;" href="{{route('admin.profile')}}">
+            <i class="fas fa-fw fa-user-alt" style="color:#5271FF;"></i>
+            <span>Profile</span>
         </a>
-    </li> -->
+    </li>
 
     <!-- Nav Item - Our Profiles -->
     <!-- <li class="nav-item">
