@@ -67,5 +67,5 @@ Route::get('/invoices/{id}/content', [InvoiceController::class, 'getInvoiceConte
 Route::get('/invoices/filter', [InvoiceController::class, 'filter'])->name('invoices.fill');
 
 
-Route::get('/auctions/{id}/edit', [AdminController::class, 'edit'])->name('auctions.edit');
-Route::put('/auctions/{id}', [AdminController::class, 'update'])->name('auctions.update');
+Route::get('/auctions/{id}/edit', [AdminController::class, 'editAuction'])->name('auctions.edit');
+Route::put('/auctions/{id}', [AdminController::class, 'updateAuction'])->name('auctions.update');

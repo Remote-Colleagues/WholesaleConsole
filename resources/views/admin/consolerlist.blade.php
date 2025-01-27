@@ -4,14 +4,14 @@
 @section('content')
 <div class="container-fluid">
     <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold" style="pointer-events: none; user-select: none; color: #5271FF;">List of Consolers</h6>
-            <a href="{{ route('consolers.create') }}" class="btn border-3" style="color:#5271FF; border-color: #5271FF;">Add Consoler</a>
-        </div>
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="m-0 font-weight-bold" style="pointer-events: none; user-select: none; color: #5271FF;">List of Consolers </h6>
+    <a href="{{ route('consolers.create') }}" class="btn border-3" style="color:#5271FF; border-color: #5271FF;">Add Consoler</a>
+</div>
 
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-borderless" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-borderless " id="dataTable" width="100%" cellspacing="0">
                     <thead style="pointer-events: none; user-select: none; color:#5271FF">
                         <tr>
                             <th>Name</th>
@@ -43,4 +43,5 @@
         </div>
     </div>
 </div>
+
 @endsection

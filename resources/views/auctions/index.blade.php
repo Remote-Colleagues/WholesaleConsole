@@ -264,7 +264,11 @@
                                     <button class="btn btn-outline-primary btn-sm">Expand</button>
                                 </td>
                               
-                                
+                                <td>
+                                    <a href="{{ route('auctions.edit', $auction->id) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </td>
                             </tr>
                             
                             <tr class="collapse details-row" id="details-{{ $auction->id }}">
