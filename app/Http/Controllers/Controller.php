@@ -41,7 +41,9 @@ class Controller
                 session(['is_admin' => false]);
                 session(['is_consoler' => true]);
                 session(['is_partner' => false]);
-                return redirect()->route('consoler.dashboard')->with('success', 'Welcome to the consoler dashboard!');
+//                return redirect()->route('consoler.dashboard')->with('success', 'Welcome to the consoler dashboard!');
+                return redirect()->route('agreement.show',['id' => $user->id])->with('success', 'Welcome to the consoler dashboard!');
+
             } else {
                 session(['is_admin' => false]);
                 session(['is_consoler' => false]);

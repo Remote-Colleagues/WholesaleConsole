@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Auctions;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Models\Consoler;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +22,29 @@ class ConsolerController extends Controller
             return view('consoler.consoler_create');
         }
         return redirect()->route('login.form')->with('error', 'You must be logged in as an admin to access this page.');
+    }
+    public function agreement($id)
+    {
+        $consoler = Consoler::where('user_id', $id)->firstOrFail();
+        $user = User::findOrFail($consoler->user_id);
+        $admin = Admin::first();
+        if ($user->status !== 'active') {
+            Auth::logout();
+            session()->flush();
+            return redirect('/')->withErrors(['error' => 'Your account is inactive. Please contact the admin.']);
+        }
+        if ($user->email_verified_at !== null) {
+            return redirect()->route('consoler.dashboard');
+        }
+        return view('consoler.agreement', compact('consoler', 'user','admin'));
+    }
+    public function submit(Request $request , $id)
+    {
+        $user = User::findOrFail($id);
+        $user->email_verified_at =Carbon:: now();
+        $user->save();
+
+        return redirect()->route('consoler.dashboard')->with('status', 'Agreement accepted successfully!');
     }
 
     public function Dashboard()
@@ -70,8 +96,8 @@ class ConsolerController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'consoler',
             'user_type' => 'consoler',
-        ]);
 
+        ]);
         Consoler::create([
             'user_id' => $user->id,
             'console_name' => $request->console_name,
@@ -129,18 +155,17 @@ class ConsolerController extends Controller
     {
         $user = User::findOrFail($id);
         $consoler = Consoler::where('user_id', $user->id)->firstOrFail();
+//        $decryptedPassword = Crypt::decryptString($user->password);
 
-        return view('consoler.update', compact('user', 'consoler'));
+        return view('consoler.update', compact('user', 'consoler' ));
     }
 
 
     public function update(Request $request, $id)
     {
-        // Find the consoler and associated user
         $consoler = Consoler::findOrFail($id);
         $user = User::findOrFail($consoler->user_id);
 
-        // Validate incoming data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
@@ -167,8 +192,8 @@ class ConsolerController extends Controller
             'comm_charge_date' => 'nullable|date',
         ]);
 
+        $user->email_verified_at = null;
         try {
-            // Update user details
             $user->update([
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],

@@ -28,9 +28,19 @@
                                         'email' => 'Email',
                                         'status' => 'Status'
                                     ] as $field => $label)
-                                        <li class="list-group-item"><strong>{{ $label }}:</strong> {{ $user->$field }}</li>
+                                        <li class="list-group-item">
+                                            <strong>{{ $label }}:</strong>
+                                            @if($field == 'name')
+                                                {{ ucwords(strtolower($user->$field)) }}
+                                            @elseif($field == 'status')
+                                                {{ ucwords($user->$field) }}
+                                            @else
+                                                {{ $user->$field }}
+                                            @endif
+                                        </li>
                                     @endforeach
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -49,9 +59,17 @@
                                         'contact_phone_number' => 'Contact Phone Number',
                                         'abn_number' => 'ABN Number'
                                     ] as $field => $label)
-                                        <li class="list-group-item"><strong>{{ $label }}:</strong> {{ $user->consoler->$field ?? 'N/A' }}</li>
+                                        <li class="list-group-item">
+                                            <strong>{{ $label }}:</strong>
+                                            @if($field == 'console_name' || $field == 'contact_person')
+                                                {{ ucwords(strtolower($user->consoler->$field ?? 'N/A')) }}
+                                            @else
+                                                {{ $user->consoler->$field ?? 'N/A' }}
+                                            @endif
+                                        </li>
                                     @endforeach
                                 </ul>
+
                             </div>
                         </div>
                     </div>
