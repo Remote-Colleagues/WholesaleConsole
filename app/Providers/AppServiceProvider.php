@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Consoler;
 use App\Observers\ConsolerObserver;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-//        Consoler::observe(ConsolerObserver::class);
+        //        Consoler::observe(ConsolerObserver::class);
+        Paginator::useBootstrapFive();
     }
-
 }

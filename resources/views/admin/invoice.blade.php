@@ -4,12 +4,11 @@
 @section('headerTitle', 'Invoices')
 
 @section('content')
-
     <div class="container-fluid">
 
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary" style="pointer-events: none; user-select: none;">List of Invoices</h6>
+                <h6 class="m-0 font-weight-bold" style="pointer-events: none; user-select: none; color: #5271FF">List of Invoices</h6>
                 <form method="GET" action="{{ route('invoices.fill') }}" class="d-flex" id="filterForm">
                     <input type="text" name="filter_consoler" class="form-control form-control-sm" placeholder="Consoler Name" value="{{ request('filter_consoler') }}" id="filterInput">
                 </form>
@@ -39,17 +38,21 @@
                                     <form action="{{ route('invoices.updateStatus', $invoice->id) }}" method="POST" id="status-form-{{ $invoice->id }}">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" class="form-control form-control-sm border-0" onchange="submitForm({{ $invoice->id }})">
-                                            <option value="" disabled selected>{{ucwords(strtolower($invoice->status ?? 'No Status'))}}</option>
-                                            <option value="paid" {{ $invoice->status == 'paid' ? 'selected' : '' }}>Paid</option>
-                                            <option value="pending" {{ $invoice->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="hide" {{ $invoice->status == 'hide' ? 'selected' : '' }}>Hide</option>
-                                        </select>
+                                        <div class="dropdown-wrapper" style="position: relative;">
+                                            <select name="status" class="form-control form-control-sm border-2" style="color:#5271FF; border-color: #5271FF;" onchange="submitForm({{ $invoice->id }})">
+                                                <option value="" disabled selected>{{ucwords(strtolower($invoice->status ?? 'No Status'))}}</option>
+                                                <option value="paid" {{ $invoice->status == 'paid' ? 'selected' : '' }}>Paid</option>
+                                                <option value="pending" {{ $invoice->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                <option value="hide" {{ $invoice->status == 'hide' ? 'selected' : '' }}>Hide</option>
+                                            </select>
+                                            <span class="arrow" style="position: absolute; top: 50%; right:25%; transform: translateY(-50%); color: #5271FF;">&#9660;</span>
+                                        </div>
+
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="{{ route('invoices.pdf', $invoice->id) }}" class="btn btn-info">Download</a>
-                                    <button type="button" class="btn btn-info view-invoice-btn" data-invoice-id="{{ $invoice->id }}">View</button>
+                                    <a href="{{ route('invoices.pdf', $invoice->id) }}" class="btn border-2" style="color:#5271FF; border-color: #5271FF">Download</a>
+                                    <button type="button" class="btn border-2 view-invoice-btn"  style="color:#5271FF; border-color: #5271FF" data-invoice-id="{{ $invoice->id }}">View</button>
                                 </td>
                             </tr>
                         @endforeach

@@ -74,14 +74,11 @@ class Controller
     public function updateStatus(Request $request)
     {
         $user = User::find($request->user_id);
-
         if ($user) {
             $user->status = $request->status;
             $user->save();
-
             return response()->json(['success' => true]);
         }
-
         return response()->json(['success' => false]);
     }
 

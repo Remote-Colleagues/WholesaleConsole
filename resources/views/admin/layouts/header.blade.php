@@ -3,8 +3,9 @@
 <nav class="navbar navbar-expand navbar-light bg-blue topbar mb-3 static-top shadow " style="background-color: #5271FF; ">
     <div class="container-fluid">
         <div class="d-flex flex-column align-items-start">
-            <span class="text-white font-weight-bold">
-                Wc Admin >
+            <!-- Primary Header -->
+            <span class=" font-weight-bold ml-4" style="color: #5271FF">
+                    Wc Admin >
                 @yield('headerTitle', 'Dashboard')
             </span>
 

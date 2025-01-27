@@ -30,7 +30,6 @@ class ConsolerController extends Controller
 
         return redirect()->route('login.form')->with('error', 'You must be logged in as a consoler to access the dashboard.');
     }
-
     public function store(Request $request)
     {
         // Validate the incoming data
@@ -86,7 +85,7 @@ class ConsolerController extends Controller
             'post_code' => $request->post_code,
             'your_agreement' => $agreementFullPath,
             'billing_commencement_period' => $request->billing_commencement_period,
-            'currency' => 'AUD', 
+            'currency' => 'AUD',
             'establishment_fee' => $request->establishment_fee,
             'establishment_fee_date' => $request->establishment_fee_date,
             'monthly_subscription_fee' => $request->monthly_subscription_fee,
@@ -109,7 +108,7 @@ class ConsolerController extends Controller
     public function show($id)
     {
         $user = User::where('id', $id)
-            // ->where('role', 'consoler')
+//             ->where('user_type', 'consoler')
             ->with('consoler')
             ->firstOrFail();
         return view('admin.consolerDetails', compact('user'));
@@ -118,12 +117,14 @@ class ConsolerController extends Controller
     public function showdetail($id)
     {
         $user = User::where('id', $id)
-            ->with('consoler') // Assuming you have a consoler relationship defined
+            ->with('consoler')
             ->firstOrFail();
 
         // Return the consoler details view with the user data
         return view('consoler.consolerDetails', compact('user'));
     }
+
+
     public function edit($id)
     {
         $user = User::findOrFail($id);

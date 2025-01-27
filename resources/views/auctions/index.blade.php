@@ -236,11 +236,10 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-center">
-                        {{ $activeAuctions->links() }}
+                        {{ $activeAuctions->appends(['tab' => 'active-auctions'])->links() }}
                     </div>
                 </div>
 
-                <!-- Past Auctions Tab -->
                 <div class="tab-pane fade" id="past-auctions" role="tabpanel" aria-labelledby="past-auctions-tab">
                     <h3 class="text-danger mt-3">Past Auctions</h3>
                     <table class="table table-bordered table-hover">
@@ -307,7 +306,7 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-center">
-                        {{ $pastAuctions->links() }}
+                        {{ $pastAuctions->appends(['tab' => 'past-auctions'])->links() }}
                     </div>
                 </div>
             </div>
@@ -318,6 +317,14 @@
 @endsection
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab') || 'active-auctions';
+
+        const tabLink = document.querySelector(`#${activeTab}-tab`);
+        if (tabLink) {
+            new bootstrap.Tab(tabLink).show();
+        }
+
         const rows = document.querySelectorAll('.main-row');
         rows.forEach(row => {
             row.addEventListener('click', function () {
@@ -326,8 +333,9 @@
                 detailsRow.classList.toggle('d-none');
             });
         });
+
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000); 
     });
-    setTimeout(function() {
-        $('.alert').alert('close');
-    }, 5000); // Close after 5 seconds
 </script>

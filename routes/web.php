@@ -14,7 +14,9 @@ use App\Http\Controllers\AdminController;
 Route::get('/admin/register', [AdminController::class, 'create'])->name('admin.register.form');
 Route::post('/admin/register', [AdminController::class, 'store'])->name('admin.store');
 Route::get('admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
+Route::get('/admin/profile', [AdminController::class, 'show'])->name('admin.profile');
+Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->name('admin.edit');
+Route::put('/admin/edit/{id}', [AdminController::class, 'update'])->name('admin.update');
 
 
 use App\Http\Controllers\ConsolerController;
