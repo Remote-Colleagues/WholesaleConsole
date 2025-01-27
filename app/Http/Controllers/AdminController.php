@@ -91,7 +91,6 @@ class AdminController extends Controller
         return redirect()->route('admin.profile', $admin->id)->with('success', 'Profile updated successfully.');
     }
 
-
     public function create()
     {
         return view('admin.reg');
@@ -159,7 +158,8 @@ class AdminController extends Controller
         $users = User::select('id', 'name', 'email' ,'status')
             ->where('user_type', 'consoler')
             ->with('consoler')
-            ->get();
+            ->paginate(10); 
+
 
         return view('admin.consolerlist', compact('users'));
     }
