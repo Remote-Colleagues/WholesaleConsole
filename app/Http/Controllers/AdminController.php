@@ -153,7 +153,6 @@ class AdminController extends Controller
         return $locationMap[$state] ?? null;  // Return null if no match
     }
 
-
     public function consolerList()
     {
         $users = User::select('id', 'name', 'email' ,'status')

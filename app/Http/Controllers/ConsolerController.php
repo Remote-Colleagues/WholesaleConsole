@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use setasign\Fpdi\Fpdi;
 
 class ConsolerController extends Controller
 {
@@ -133,21 +135,57 @@ class ConsolerController extends Controller
 
     public function show($id)
     {
+        $admin = Admin::first();
         $user = User::where('id', $id)
-//             ->where('user_type', 'consoler')
             ->with('consoler')
             ->firstOrFail();
-        return view('admin.consolerDetails', compact('user'));
+        return view('admin.consolerDetails', compact('user','admin'));
     }
+
+    public function viewAgreementPdf($id, $agreement)
+    {
+        $user = User::findOrFail($id);
+        $agreementTitle = ['master' => 'Master Agreement', 'term' => 'Terms and Conditions', 'services' => 'Service Schedule Agreement'][$agreement] ?? 'Agreement';
+        $admin = Admin::first();
+        $serviceSchedule = $user->consoler->your_agreement ?? null;
+        $master = $admin->master_agreement_for_wconsoler ?? null;
+        $term = $admin->terms_conditions_wc_consolers ?? null;
+        $agreementsData = [
+            'master' => $master ? storage_path('app/public/term/' . basename($master)) : null,
+            'term' => $term ? storage_path('app/public/term/' . basename($term)) : null,
+            'services' => $serviceSchedule ? storage_path('app/public/agreements/' . basename($serviceSchedule)) : null,
+        ];
+        if (!array_key_exists($agreement, $agreementsData) || !$agreementsData[$agreement]) {
+            abort(404, 'Agreement not found');
+        }
+        $firstPage = PDF::loadView('admin.agreement', compact('user', 'agreementTitle', 'agreementsData'));
+        $firstPagePath = storage_path('app/public/temp_first_page.pdf');
+        $firstPage->save($firstPagePath);
+        $pdf = new Fpdi();
+        $pdf->AddPage();
+        $pdf->setSourceFile($firstPagePath);
+        $templateId = $pdf->importPage(1);
+        $pdf->useTemplate($templateId);
+        $agreementPdfPath = $agreementsData[$agreement];
+        $pageCount = $pdf->setSourceFile($agreementPdfPath);
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $templateId = $pdf->importPage($i);
+            $pdf->AddPage();
+            $pdf->useTemplate($templateId);
+        }
+        return response($pdf->Output(), 200)
+            ->header('Content-Type', 'application/pdf');
+    }
+
 
     public function showdetail($id)
     {
+        $admin = Admin::first();
         $user = User::where('id', $id)
             ->with('consoler')
             ->firstOrFail();
 
-        // Return the consoler details view with the user data
-        return view('consoler.consolerDetails', compact('user'));
+        return view('consoler.consolerDetails', compact('user','admin'));
     }
 
 

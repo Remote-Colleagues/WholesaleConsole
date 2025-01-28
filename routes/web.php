@@ -31,7 +31,7 @@ Route::get('/consoler/dashboard', [ConsolerController::class, 'Dashboard'])->nam
 Route::get('/consolers/{id}', [ConsolerController::class, 'show'])->name('consoler.details');
 Route::get('/agreement/{id}', [ConsolerController::class, 'agreement'])->name('agreement.show');
 Route::post('/agreement-submit/{id}', [ConsolerController::class, 'submit'])->name('agreement.submit');
-
+Route::get('/view-agreement-pdf/{userId}/{agreement}', [ConsolerController::class, 'viewAgreementPdf'])->name('view.agreement.pdf');
 
 Route::post('/update-status', [Controller::class, 'updateStatus']);
 Route::get('policy', [Controller::class, 'showPolicy'])->name('policy.form');
