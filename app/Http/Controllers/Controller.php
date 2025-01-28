@@ -41,7 +41,9 @@ class Controller
                 session(['is_admin' => false]);
                 session(['is_consoler' => true]);
                 session(['is_partner' => false]);
-                return redirect()->route('consoler.dashboard')->with('success', 'Welcome to the consoler dashboard!');
+//                return redirect()->route('consoler.dashboard')->with('success', 'Welcome to the consoler dashboard!');
+                return redirect()->route('agreement.show',['id' => $user->id])->with('success', 'Welcome to the consoler dashboard!');
+
             } else {
                 session(['is_admin' => false]);
                 session(['is_consoler' => false]);
@@ -59,7 +61,7 @@ class Controller
         return view('policy');
     }
 
-  
+
     /**
      * Handle the logout request.
      */
@@ -67,7 +69,20 @@ class Controller
     {
         Auth::logout();
         session()->flush();
-        return redirect()->route('login.form')->with('success', 'Logged out successfully!');
+//        return redirect()->route('login.form')->with('success', 'Logged out successfully!');
+        return redirect('/')->with('success', 'Logged out successfully!');
+
     }
-    
+    public function updateStatus(Request $request)
+    {
+        $user = User::find($request->user_id);
+        if ($user) {
+            $user->status = $request->status;
+            $user->save();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false]);
+    }
+
+
 }

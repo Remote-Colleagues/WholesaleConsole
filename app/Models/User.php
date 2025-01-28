@@ -76,10 +76,18 @@ class User extends Authenticatable
 {
     return $this->belongsTo(User::class);
 }
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
 public function consoler()
 {
     return $this->hasOne(Consoler::class);
 }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 
 
 }
