@@ -17,11 +17,18 @@ class Admin extends Model
         'privacy_policy_for_all',
         'abn_number',
         'banking_detail',
+        'master_agreement_for_wconsoler',
+        'master_agreement_for_partners',
+        'bsb_number',
     ];
 
     public function admin()
 {
     return $this->hasOne(Admin::class);
 }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }
