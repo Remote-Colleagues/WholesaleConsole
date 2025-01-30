@@ -21,6 +21,7 @@ class Invoice extends Model
         'amount',
         'status',
         'consoler_id',
+        'partner_id',
         'user_id',
     ];
 
@@ -35,6 +36,10 @@ class Invoice extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
     }
 
 }

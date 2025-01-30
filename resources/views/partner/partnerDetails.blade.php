@@ -1,13 +1,13 @@
-@extends('admin.layouts.app')
-@section('headerTitle', 'Consoler Details')
+
+@extends('partner.layouts.app')
+@section('headerTitle', 'Partner Details')
 @section('content')
     <div class="container-fluid">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center" style="color: #5271FF;">
-                <h6 class="m-0 font-weight-bold">Consoler Details</h6>
+                <h6 class="m-0 font-weight-bold">Partnerr Details</h6>
                 <div class="d-flex justify-content-end">
-                    <a href="{{ route('consoler.list') }}" class="btn btn-light btn-sm me-2" style="color: #5271FF;">Back to List</a>
-                    <a href="{{ route('consoler.edit', $user->id) }}" class="btn btn-light btn-sm" style="color: #5271FF;">Edit</a>
+                    <a href="{{ route('partner.dashboard') }}" class="btn btn-light btn-sm me-2" style="color: #5271FF;">Back to List</a>
                 </div>
             </div>
 
@@ -35,22 +35,22 @@
                         </div>
                     </div>
 
-                    <!-- Console Information -->
+                    <!-- Partner Information -->
                     <div class="col-lg-4 mb-4">
                         <div class="card shadow-sm">
                             <div class="card-header" style="color: #5271FF;">
-                                <h5><i class="fas fa-laptop"></i> Console Details</h5>
+                                <h5><i class="fas fa-laptop"></i> Partner Details</h5>
                             </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
                                     @foreach ([
-                                        'console_name' => 'Console Name',
+                                        'partner_name' => 'Partner Name',
                                         'contact_person' => 'Contact Person',
                                         'contact_phone_number' => 'Contact Phone Number',
                                         'abn_number' => 'ABN Number'
                                     ] as $field => $label)
                                         <li class="list-group-item">
-                                            <strong>{{ $label }}:</strong> {{ $user->consoler->$field ?? 'N/A' }}
+                                            <strong>{{ $label }}:</strong> {{ $user->partner->$field ?? 'N/A' }}
                                         </li>
                                     @endforeach
                                 </ul>
@@ -65,19 +65,22 @@
                                 <h5><i class="fas fa-map-marker-alt"></i> Address Details</h5>
                             </div>
                             <div class="card-body">
+
                                 <ul class="list-group list-group-flush">
-                                    @foreach ([
-                                        'building' => 'Building',
-                                        'city' => 'City',
-                                        'state' => 'State',
-                                        'country' => 'Country',
-                                        'post_code' => 'Post Code'
-                                    ] as $field => $label)
+                                    @if (!empty($operation_locations) && count($operation_locations) > 0)
+                                        @foreach ($operation_locations as $index => $location)
+                                            <li class="list-group-item">
+                                                <strong>Location {{ $index + 1 }}:</strong> {{ trim($location) }}
+                                            </li>
+                                        @endforeach
+                                    @else
                                         <li class="list-group-item">
-                                            <strong>{{ $label }}:</strong> {{ $user->consoler->$field ?? 'N/A' }}
+                                            <strong>Operation Location:</strong> Not Provided
                                         </li>
-                                    @endforeach
+                                    @endif
                                 </ul>
+
+
                             </div>
                         </div>
                     </div>
@@ -94,8 +97,8 @@
                                 <ul class="list-group list-group-flush">
 {{--                                    <li class="list-group-item">--}}
 {{--                                        <strong>Your Agreement:</strong>--}}
-{{--                                        @if($user->consoler && $user->consoler->your_agreement)--}}
-{{--                                            <a href="{{ Storage::url($user->consoler->your_agreement) }}" class="btn" style="color: #5271FF" target="_blank">--}}
+{{--                                        @if($user->partner && $user->partner->your_agreement)--}}
+{{--                                            <a href="{{ Storage::url($user->partner->your_agreement)}}" class="btn" style="color: #5271FF" target="_blank">--}}
 {{--                                                <i class="fas fa-file-pdf"></i> View Agreement--}}
 {{--                                            </a>--}}
 {{--                                        @else--}}
@@ -103,19 +106,13 @@
 {{--                                        @endif--}}
 {{--                                    </li>--}}
                                     @foreach ([
-                                        'billing_commencement_period' => 'Billing Commencement Period',
-                                        'currency' => 'Currency',
+                                        'billing_commencement_date' => 'Billing Commencement Period',
                                         'establishment_fee' => 'Establishment Fee',
-                                        'establishment_fee_date' => 'Establishment Fee Date',
                                         'monthly_subscription_fee' => 'Monthly Subscription Fee',
-                                        'monthly_subscription_fee_date' => 'Monthly Subscription Fee Date',
-                                        'admin_fee' => 'Admin Fee',
-                                        'admin_fee_date' => 'Admin Fee Date',
-                                        'comm_charge' => 'Commission Charge',
-                                        'comm_charge_date' => 'Commission Charge Date'
+                                        'csvusernumber' => 'CSV Number'
                                     ] as $field => $label)
                                         <li class="list-group-item">
-                                            <strong>{{ $label }}:</strong> {{ $user->consoler->$field ?? 'N/A' }}
+                                            <strong>{{ $label }}:</strong> {{ $user->partner->$field ?? 'N/A' }}
                                         </li>
                                     @endforeach
                                 </ul>
@@ -132,21 +129,21 @@
                                 @if($user->email_verified_at)
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">
-                                            <strong>Master Agreement with WConsole:</strong>
-                                            <a href="{{ route('view.agreement.pdf', ['userId' => $user->id, 'agreement' => 'master']) }}" target="_blank" class="hover:underline" style="color: #5271FF;">
+                                            <strong>Master Agreement with WPartner:</strong>
+                                            <a href="{{ route('view.partneragreement.pdf', ['userId' => $user->id, 'agreement' => 'master']) }}" target="_blank" class="hover:underline" style="color: #5271FF;">
                                                 View Agreement
                                             </a>
                                         </li>
 
                                         <li class="list-group-item">
-                                            <strong>Terms of services with WConsole:</strong>
-                                            <a href="{{ route('view.agreement.pdf', ['userId' => $user->id, 'agreement' => 'term']) }}" target="_blank" class="hover:underline" style="color: #5271FF;">
+                                            <strong>Terms of services with WPartner:</strong>
+                                            <a href="{{ route('view.partneragreement.pdf', ['userId' => $user->id, 'agreement' => 'term']) }}" target="_blank" class="hover:underline" style="color: #5271FF;">
                                                 View Agreement
                                             </a>
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>Services schedule with WConsole:</strong>
-                                            <a href="{{ route('view.agreement.pdf', ['userId' => $user->id, 'agreement' => 'services']) }}" target="_blank" class="hover:underline" style="color: #5271FF;">
+                                            <strong>Services schedule with WPartner:</strong>
+                                            <a href="{{ route('view.partneragreement.pdf', ['userId' => $user->id, 'agreement' => 'services']) }}" target="_blank" class="hover:underline" style="color: #5271FF;">
                                                 View Agreement
                                             </a>
                                         </li>

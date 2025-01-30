@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PartnerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\AdminController;
@@ -34,22 +35,33 @@ Route::post('/agreement-submit/{id}', [ConsolerController::class, 'submit'])->na
 Route::get('/view-agreement-pdf/{userId}/{agreement}', [ConsolerController::class, 'viewAgreementPdf'])->name('view.agreement.pdf');
 
 Route::post('/update-status', [Controller::class, 'updateStatus']);
+
 Route::get('policy', [Controller::class, 'showPolicy'])->name('policy.form');
 Route::get('login', [Controller::class, 'showLoginForm'])->name('login.form');
 Route::post('login', [Controller::class, 'login'])->name('login');
 Route::post('logout', [Controller::class, 'logout'])->name('logout');
 
-Route::get('partner/dashboard', function () {
-    if (session('is_partner')) {
-        return view('partner.dashboard');
-    }
-    return redirect()->route('login.form')->with('error', 'You are not authorized to access this page.');
-})->name('partner.dashboard');
 
 Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
 Route::get('/invoices/pdf/{id}', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
 Route::put('invoices/{id}/update-status', [InvoiceController::class, 'updateInvoiceStatus'])->name('invoices.updateStatus');
 Route::get('/invoices/{id}/content', [InvoiceController::class, 'getInvoiceContent'])->name('invoices.content');
+Route::get('/invoices/{id}/partner', [InvoiceController::class, 'partnerinvoice'])->name('invoices.partner');
+Route::get('/invoices/partner/pdf/{id}', [InvoiceController::class, 'partnerPDF'])->name('partnerinvoices.pdf');
 Route::get('/invoices/filter', [InvoiceController::class, 'filter'])->name('invoices.fill');
 
+
+Route::get('/partnerlist', [PartnerController::class, 'partnerList'])->name('partner.list');
+Route::get('partners/create', [PartnerController::class, 'create'])->name('partners.create');
+Route::post('partners/store', [PartnerController::class, 'store'])->name('partners.store');
+Route::get('/partners/{id}', [PartnerController::class, 'show'])->name('partner.details');
+Route::get('/partner/edit/{id}', [PartnerController::class, 'edit'])->name('partner.edit');
+Route::put('/partner/update/{id}', [PartnerController::class, 'update'])->name('partner.update');
+Route::get('/partner/details/{id}', [PartnerController::class, 'showdetail'])->name('partner.profile');
+Route::get('/partner/dashboard', [PartnerController::class, 'Dashboard'])->name('partner.dashboard');
+Route::get('car-auctions/part', [PartnerController::class, 'showAllAuctions'])->name('auction.car');
+Route::get('/agreement/{id}', [PartnerController::class, 'agreement'])->name('partneragreement.show');
+Route::post('/agreement-submit/{id}', [PartnerController::class, 'submit'])->name('partneragreement.submit');
+Route::get('/view-partneragreement-pdf/{userId}/{agreement}', [PartnerController::class, 'viewAgreementPdf'])->name('view.partneragreement.pdf');
+Route::get('/all-partners-invoices', [PartnerController::class, 'showInvoices'])->name('invoicepartner.show');
 

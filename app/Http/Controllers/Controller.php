@@ -48,7 +48,9 @@ class Controller
                 session(['is_admin' => false]);
                 session(['is_consoler' => false]);
                 session(['is_partner' => true]);
-                return redirect()->route('partner.dashboard')->with('success', 'Welcome to the partner dashboard!');
+//                return redirect()->route('partner.dashboard')->with('success', 'Welcome to the partner dashboard!');
+                return redirect()->route('partneragreement.show',['id' => $user->id])->with('success', 'Welcome to the consoler dashboard!');
+
             }
         }
 

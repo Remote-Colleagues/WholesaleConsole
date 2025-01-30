@@ -45,7 +45,6 @@ class ConsolerController extends Controller
         $user = User::findOrFail($id);
         $user->email_verified_at =Carbon:: now();
         $user->save();
-
         return redirect()->route('consoler.dashboard')->with('status', 'Agreement accepted successfully!');
     }
 
@@ -184,7 +183,6 @@ class ConsolerController extends Controller
         $user = User::where('id', $id)
             ->with('consoler')
             ->firstOrFail();
-
         return view('consoler.consolerDetails', compact('user','admin'));
     }
 
@@ -193,8 +191,6 @@ class ConsolerController extends Controller
     {
         $user = User::findOrFail($id);
         $consoler = Consoler::where('user_id', $user->id)->firstOrFail();
-//        $decryptedPassword = Crypt::decryptString($user->password);
-
         return view('consoler.update', compact('user', 'consoler' ));
     }
 

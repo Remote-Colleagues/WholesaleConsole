@@ -88,6 +88,9 @@ public function consoler()
     {
         return $this->hasMany(Invoice::class);
     }
-
+    public function partner()
+    {
+        return $this->hasOne(Partner::class);
+    }
 
 }

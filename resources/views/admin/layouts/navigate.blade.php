@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Partner -->
     <li class="nav-item ">
-        <a class="nav-link text-600" href="#" style="color:#5271FF;" >
+        <a class="nav-link text-600" href="{{ route('partner.list') }}" style="color:#5271FF;" >
             <i class="fas fa-fw fa-users" style="color:#5271FF;"></i>
             <span>Partner</span>
         </a>
