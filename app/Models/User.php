@@ -89,5 +89,8 @@ public function consoler()
         return $this->hasMany(Invoice::class);
     }
 
-
+    public function shortlists()
+    {
+        return $this->hasMany(Shortlist::class);
+    }
 }

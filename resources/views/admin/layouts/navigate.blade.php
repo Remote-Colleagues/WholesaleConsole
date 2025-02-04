@@ -35,7 +35,12 @@
             <span>Cars at Auction</span>
         </a>
     </li>
-
+    <li class="nav-item">
+        <a class="nav-link" style="color:#5271FF;" href="{{ route('auctions.shortlisted') }}">
+            <i class="fas fa-fw fa-bullhorn" style="color:#5271FF;"></i>
+            <span>Shortlisted Cars</span>
+        </a>
+    </li>
     <!-- Nav Item - Upcoming Event -->
 {{--     <li class="nav-item">--}}
 {{--        <a class="nav-link" href="#">--}}

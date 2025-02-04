@@ -38,7 +38,7 @@ Route::get('/auctions', [AdminController::class, 'showAllAuctions'])->name('auct
 
  Route::post('/auctions/import', [AdminController::class, 'import'])->name('auctions.import');
 
-Route::post('/update-status', [Controller::class, 'updateStatus']);
+// Route::post('/update-status', [Controller::class, 'updateStatus']);
 
 
 use App\Http\Controllers\Controller;
@@ -69,3 +69,9 @@ Route::get('/invoices/filter', [InvoiceController::class, 'filter'])->name('invo
 
 Route::get('/auctions/{id}/edit', [AdminController::class, 'editAuction'])->name('auctions.edit');
 Route::put('/auctions/{id}', [AdminController::class, 'updateAuction'])->name('auctions.update');
+
+Route::post('/auctions/{id}/shortlist', [AdminController::class, 'shortlistAuction'])
+->middleware('auth')
+->name('auctions.shortlist');
+Route::get('/shortlisted-auctions', [AdminController::class, 'showShortlistedAuctions'])->name('auctions.shortlisted');
+Route::delete('/auctions/unshortlist/{id}', [AdminController::class, 'unshortlistAuction'])->name('auctions.unshortlist');

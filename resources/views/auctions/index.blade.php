@@ -3,18 +3,12 @@
 @section('title', 'Auctions List')
 
 @section('content')
-<!-- Include Bootstrap CSS and JS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
+<!-- Include Bootstrap 5 CSS and JS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 <style>
-    /* Add this to your custom CSS file */
     .alert {
         font-size: 1.1rem;
         border-radius: 10px;
@@ -93,6 +87,7 @@
             </div>
             <div class="text-primary">Total: <span>{{ $totalcount }}</span></div>
         </div>
+
         @if (session('message'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <div class="d-flex align-items-center">
@@ -100,7 +95,7 @@
                 <div>
                     <strong>Success!</strong> {{ session('message') }}
                 </div>
-                <button type="button" class="btn-close ml-auto" data-dismiss="alert" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -114,7 +109,7 @@
                 <div>
                     <strong>Error!</strong> {{ session('error') }}
                 </div>
-                <button type="button" class="btn-close ml-auto" data-dismiss="alert" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -145,11 +140,8 @@
                         </div>
                     </div>
                 </form>
-
-
             </div>
         </div>
-
 
         <div class="card-body">
             <ul class="nav nav-tabs" id="auctionTabs" role="tablist">
@@ -165,181 +157,233 @@
 
             <div class="tab-content" id="auctionTabsContent">
                 <!-- Active Auctions Tab -->
-                <div class="tab-pane fade show active" id="active-auctions" role="tabpanel"
-                    aria-labelledby="active-auctions-tab">
+                <div class="tab-pane fade show {{ $activeTab == 'active-auctions' ? 'active' : '' }}" id="active-auctions"
+                role="tabpanel" aria-labelledby="active-auctions-tab">
+
                     <h3 class="text-primary mt-3">Active Auctions</h3>
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>S.N</th>
+                                <th>Image</th>
                                 <th>Name</th>
-                                <th>Make</th>
-                                <th>Model</th>
+                                <th>Odometer(KM)</th>
+                                <th>Fuel</th>
+                                <th>Auctioneer</th>
+                                <th>Auction Type</th>
                                 <th>Deadline</th>
+                                <th>Shortlist</th>
                                 <th>Details</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($activeAuctions as $auction)
-                            <tr data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}"
-                                aria-expanded="false" aria-controls="details-{{ $auction->id }}">
+                            @foreach ($activeAuctions as $index => $auction)
+                            <tr >
+                                <td>{{ $index + 1 }}</td>
+                                <td><img src="{{ $auction->image ?? 'path/to/default/image.jpg' }}" alt="Auction Image" class="img-thumbnail" width="50"></td>
                                 <td>{{ $auction->name }}</td>
-                                <td>{{ $auction->make }}</td>
-                                <td>{{ $auction->model }}</td>
+                                <td>{{ $auction->odometer }}</td>
+                                <td>{{ $auction->fuel }}</td>
+                                <td>{{ $auction->auctioneer }}, {{$auction->state}}</td>
+                                <td>{{ $auction->type }}</td>
                                 <td>{{ $auction->formatted_deadline }}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary btn-sm">Expand</button>
+                                    @if (DB::table('shortlists')->where('auction_id', $auction->id)->exists())
+                                        <!-- If auction is shortlisted, show unshortlist button -->
+                                        <form action="{{ route('auctions.unshortlist', $auction->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to unshortlist this auction?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Unshortlist</button>
+                                        </form>
+                                    @else
+                                        <!-- If auction is not shortlisted, show shortlist button -->
+                                        <form action="{{ route('auctions.shortlist', $auction->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to shortlist this auction?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success">Shortlist</button>
+                                        </form>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}">
+                                        Expand
+                                    </button>
                                 </td>
                                 <td>
                                     <a href="{{ route('auctions.edit', $auction->id) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                 </td>
-                                
                             </tr>
+
                             <tr class="collapse details-row" id="details-{{ $auction->id }}">
-                                <td colspan="5">
-                                    <div class="details-container p-3 border rounded bg-light shadow-sm">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <p><strong>Build Date:</strong> <span class="text-muted">{{
-                                                        $auction->build_date }}</span></p>
-                                                <p><strong>Odometer:</strong> <span class="text-muted">{{
-                                                        $auction->odometer }}</span></p>
-                                                <p><strong>Body Type:</strong> <span class="text-muted">{{
-                                                        $auction->body_type }}</span></p>
-                                                <p><strong>Fuel:</strong> <span class="text-muted">{{ $auction->fuel
-                                                        }}</span></p>
-                                                <p><strong>Transmission:</strong> <span class="text-muted">{{
-                                                        $auction->transmission }}</span></p>
+                                <td colspan="10">
+                                    <div class="details-container">
+                                        <div class="card border-light mb-3">
+                                            <div class="card-header bg-primary text-white">
+                                                <h5 class="card-title">Auction Details</h5>
                                             </div>
-                                            <div class="col-md-6">
-                                                <p><strong>Seats:</strong> <span class="text-muted">{{ $auction->seats
-                                                        }}</span></p>
-                                                <p><strong>Auctioneer:</strong> <span class="text-muted">{{
-                                                        $auction->auctioneer }}</span></p>
-                                                <p><strong>State:</strong> <span class="text-muted">{{ $auction->state
-                                                        }}</span></p>
-                                                <p><strong>VIN:</strong> <span class="text-muted">{{ $auction->vin
-                                                        }}</span></p>
-                                                <p><strong>Link:</strong>
-                                                    <a href="{{ $auction->link_to_auction }}" target="_blank"
-                                                        class="text-primary text-decoration-underline">View Auction</a>
-                                                </p>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p><strong>Name:</strong> {{ $auction->name }}</p>
+                                                        <p><strong>Make:</strong> {{ $auction->make }}</p>
+                                                        <p><strong>Model:</strong> {{ $auction->model }}</p>
+                                                        <p><strong>Build Date:</strong> {{ $auction->build_date }}</p>
+                                                        <p><strong>Odometer (KM):</strong> {{ $auction->odometer }}</p>
+                                                        <p><strong>Fuel:</strong> {{ $auction->fuel }}</p>
+                                                        <p><strong>Transmission:</strong> {{ $auction->transmission }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p><strong>Body Type:</strong> {{ $auction->body_type }}</p>
+                                                        <p><strong>Seats:</strong> {{ $auction->seats }}</p>
+                                                        <p><strong>Auctioneer:</strong> {{ $auction->auctioneer }}</p>
+                                                        <p><strong>State:</strong> {{ $auction->state }}</p>
+                                                        <p><strong>VIN:</strong> {{ $auction->vin }}</p>
+                                                        <p><strong>Hours:</strong> {{ $auction->hours }}</p>
+                                                        <p><strong>Deadline:</strong> {{ $auction->formatted_deadline }}</p>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <p><strong>Link to Auction:</strong> <a href="{{ $auction->link_to_auction }}" target="_blank" class="btn btn-link">{{ $auction->link_to_auction }}</a></p>
+                                                        <p><strong>Other Specs:</strong> {{ $auction->other_specs }}</p>
+                                                        <p><strong>Unique Identifier:</strong> {{ $auction->unique_identifier }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </td>
                             </tr>
-
                             @endforeach
-                   
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
-                        {{ $activeAuctions->appends(['tab' => 'active-auctions'])->links() }}
-                    </div>
+                    {{ $activeAuctions->appends(['tab' => 'active-auctions'])->links() }}
+
+
                 </div>
 
-                <div class="tab-pane fade" id="past-auctions" role="tabpanel" aria-labelledby="past-auctions-tab">
-                    <h3 class="text-danger mt-3">Past Auctions</h3>
+                <!-- Past Auctions Tab -->
+                <div class="tab-pane fade show {{ $activeTab == 'past-auctions' ? 'active' : '' }}" id="past-auctions" role="tabpanel" aria-labelledby="past-auctions-tab">
+
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>S.N</th>
+                                <th>Image</th>
                                 <th>Name</th>
-                                <th>Make</th>
-                                <th>Model</th>
+                                <th>Odometer(KM)</th>
+                                <th>Fuel</th>
+                                <th>Auctioneer</th>
+                                <th>Auction Type</th>
                                 <th>Deadline</th>
+                                <th>Shortlist</th>
                                 <th>Details</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($pastAuctions as $auction)
-                            <tr data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}"
-                                aria-expanded="false" aria-controls="details-{{ $auction->id }}">
+                            @foreach ($pastAuctions as $index => $auction)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td><img src="{{ $auction->image }}" alt="Auction Image" class="img-thumbnail" width="50"></td>
                                 <td>{{ $auction->name }}</td>
-                                <td>{{ $auction->make }}</td>
-                                <td>{{ $auction->model }}</td>
+                                <td>{{ $auction->odometer }}</td>
+                                <td>{{ $auction->fuel }}</td>
+                                <td>{{ $auction->auctioneer }}</td>
+                                <td>{{ $auction->type }}</td>
                                 <td>{{ $auction->formatted_deadline }}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary btn-sm">Expand</button>
+                                    @if (DB::table('shortlists')->where('auction_id', $auction->id)->exists())
+                                        <!-- If auction is shortlisted, show unshortlist button -->
+                                        <form action="{{ route('auctions.unshortlist', $auction->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to unshortlist this auction?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Unshortlist</button>
+                                        </form>
+                                    @else
+                                        <!-- If auction is not shortlisted, show shortlist button -->
+                                        <form action="{{ route('auctions.shortlist', $auction->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to shortlist this auction?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success">Shortlist</button>
+                                        </form>
+                                    @endif
                                 </td>
-                              
                                 <td>
-                                    <a href="{{ route('auctions.edit', $auction->id) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#details-{{ $auction->id }}">
+                                        Expand
+                                    </button>
                                 </td>
                             </tr>
-                            
                             <tr class="collapse details-row" id="details-{{ $auction->id }}">
-                                <td colspan="5">
-                                    <div class="details-container p-3 border rounded bg-light shadow-sm">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <p><strong>Build Date:</strong> <span class="text-muted">{{
-                                                        $auction->build_date }}</span></p>
-                                                <p><strong>Odometer:</strong> <span class="text-muted">{{
-                                                        $auction->odometer }}</span></p>
-                                                <p><strong>Body Type:</strong> <span class="text-muted">{{
-                                                        $auction->body_type }}</span></p>
-                                                <p><strong>Fuel:</strong> <span class="text-muted">{{ $auction->fuel
-                                                        }}</span></p>
-                                                <p><strong>Transmission:</strong> <span class="text-muted">{{
-                                                        $auction->transmission }}</span></p>
+                                <td colspan="9">
+                                    <div class="details-container">
+                                        <div class="card border-light mb-3">
+                                            <div class="card-header bg-primary text-white">
+                                                <h5 class="card-title">Auction Details</h5>
                                             </div>
-                                            <div class="col-md-6">
-                                                <p><strong>Seats:</strong> <span class="text-muted">{{ $auction->seats
-                                                        }}</span></p>
-                                                <p><strong>Auctioneer:</strong> <span class="text-muted">{{
-                                                        $auction->auctioneer }}</span></p>
-                                                <p><strong>State:</strong> <span class="text-muted">{{ $auction->state
-                                                        }}</span></p>
-                                                <p><strong>VIN:</strong> <span class="text-muted">{{ $auction->vin
-                                                        }}</span></p>
-                                                <p><strong>Link:</strong>
-                                                    <a href="{{ $auction->link_to_auction }}" target="_blank"
-                                                        class="text-primary text-decoration-underline">View Auction</a>
-                                                </p>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p><strong>Name:</strong> {{ $auction->name }}</p>
+                                                        <p><strong>Make:</strong> {{ $auction->make }}</p>
+                                                        <p><strong>Model:</strong> {{ $auction->model }}</p>
+                                                        <p><strong>Build Date:</strong> {{ $auction->build_date }}</p>
+                                                        <p><strong>Odometer (KM):</strong> {{ $auction->odometer }}</p>
+                                                        <p><strong>Fuel:</strong> {{ $auction->fuel }}</p>
+                                                        <p><strong>Transmission:</strong> {{ $auction->transmission }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p><strong>Body Type:</strong> {{ $auction->body_type }}</p>
+                                                        <p><strong>Seats:</strong> {{ $auction->seats }}</p>
+                                                        <p><strong>Auctioneer:</strong> {{ $auction->auctioneer }}</p>
+                                                        <p><strong>State:</strong> {{ $auction->state }}</p>
+                                                        <p><strong>VIN:</strong> {{ $auction->vin }}</p>
+                                                        <p><strong>Hours:</strong> {{ $auction->hours }}</p>
+                                                        <p><strong>Deadline:</strong> {{ $auction->formatted_deadline }}</p>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <p><strong>Link to Auction:</strong> <a href="{{ $auction->link_to_auction }}" target="_blank" class="btn btn-link">{{ $auction->link_to_auction }}</a></p>
+                                                        <p><strong>Other Specs:</strong> {{ $auction->other_specs }}</p>
+                                                        <p><strong>Unique Identifier:</strong> {{ $auction->unique_identifier }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </td>
                             </tr>
-
                             @endforeach
                         </tbody>
+
                     </table>
-                    <div class="d-flex justify-content-center">
-                        {{ $pastAuctions->appends(['tab' => 'past-auctions'])->links() }}
-                    </div>
+                    {{ $pastAuctions->appends(['tab' => 'past-auctions'])->links() }}
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
 @endsection
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const activeTab = urlParams.get('tab') || 'active-auctions';
 
-        const tabLink = document.querySelector(`#${activeTab}-tab`);
-        if (tabLink) {
-            new bootstrap.Tab(tabLink).show();
+        const tab = document.querySelector(`#${activeTab}-tab`);
+        if (tab) {
+            new bootstrap.Tab(tab).show();
         }
-
-        const rows = document.querySelectorAll('.main-row');
-        rows.forEach(row => {
-            row.addEventListener('click', function () {
-                const auctionId = this.getAttribute('data-id');
-                const detailsRow = document.getElementById(`details-${auctionId}`);
-                detailsRow.classList.toggle('d-none');
-            });
-        });
-
-        setTimeout(function() {
-            $('.alert').alert('close');
-        }, 5000); 
     });
 </script>

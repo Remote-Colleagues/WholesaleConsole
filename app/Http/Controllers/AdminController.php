@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Shortlist;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -158,94 +160,11 @@ class AdminController extends Controller
         $users = User::select('id', 'name', 'email' ,'status')
             ->where('user_type', 'consoler')
             ->with('consoler')
-            ->paginate(10); 
+            ->paginate(10);
 
 
         return view('admin.consolerlist', compact('users'));
     }
-    public function showAllAuctions(Request $request)
-    {
-        // Get filter parameters from the query string
-        $selectedMake = $request->query('make');
-        $selectedModel = $request->query('model');
-        $selectedBodyType = $request->query('body_type');
-        $selectedBuildDate = $request->query('build_date');
-        $selectedAuctionName = $request->query('auction_name');
-        $selectedLocation = $request->query('location');
-    
-        // Initialize the query
-        $query = Auctions::query();
-    
-        // Apply filters to the query
-        if ($selectedMake) {
-            $query->where('make', $selectedMake);
-        }
-        if ($selectedModel) {
-            $query->where('model', $selectedModel);
-        }
-        if ($selectedBodyType) {
-            $query->where('body_type', $selectedBodyType);
-        }
-        if ($selectedBuildDate) {
-            $query->where('build_date', $selectedBuildDate);
-        }
-        if ($selectedAuctionName) {
-            $query->where('auctioneer', $selectedAuctionName);
-        }
-        if ($selectedLocation) {
-            $query->where('state', $selectedLocation);
-        }
-    
-        // Clone the query for active and past auctions
-        $activeAuctionsQuery = clone $query;
-        $pastAuctionsQuery = clone $query;
-    
-        // Active auctions: Only those whose deadline is in the future
-        $activeAuctions = $activeAuctionsQuery->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) > NOW()')
-            ->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%Y/%m/%d %H:%i:%s') as formatted_deadline")
-            ->orderBy('formatted_deadline')
-            ->paginate(30);  // Pagination for active auctions
-    
-        // Past auctions: Only those whose deadline has passed
-        $pastAuctions = $pastAuctionsQuery->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) <= NOW()')
-            ->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%Y/%m/%d %H:%i:%s') as formatted_deadline")
-            ->orderBy('formatted_deadline', 'desc')
-            ->paginate(30);  // Pagination for past auctions
-    
-        // Fetch unique values for filters
-        $makes = Auctions::pluck('make')->unique();
-        $models = Auctions::pluck('model')->unique();
-        $bodyTypes = Auctions::pluck('body_type')->unique();
-        $buildDates = Auctions::pluck('build_date')->unique();
-        $auctionNames = Auctions::pluck('auctioneer')->unique();
-        $locations = Auctions::pluck('state')->unique();
-    
-        // Count of total auctions
-        $totalcount = Auctions::count();
-        $activeTab = $request->query('tab', 'active-auctions');
-
-        // Return the view with the necessary data
-        return view('auctions.index', compact(
-            'activeAuctions',
-            'pastAuctions',
-            'totalcount',
-            'models',
-            'makes',
-            'bodyTypes',
-            'buildDates',
-            'auctionNames',
-            'locations',
-            'selectedMake',
-            'selectedModel',
-            'selectedBodyType',
-            'selectedBuildDate',
-            'selectedAuctionName',
-            'selectedLocation',
-            'activeTab'
-        ));
-    }
-    
-
     public function import(Request $request)
     {
         $request->validate([
@@ -337,7 +256,7 @@ class AdminController extends Controller
             return back()->with('error', 'Error uploading CSV file');
         }
     }
-    
+
     public function editAuction($id)
 {
     $auction = Auctions::findOrFail($id);
@@ -364,7 +283,7 @@ public function updateAuction(Request $request, $id)
         'transmission' => 'nullable|string|max:255',
         'seats' => 'nullable|integer',
         'auctioneer' => 'nullable|string|max:255',
-        'hours' => 'nullable|numeric|min:0', // Ensure hours is numeric in validation
+        'hours' => 'nullable|numeric|min:0',
         'state' => 'nullable|string|max:255',
         'link_to_auction' => 'nullable|url',
         'vin' => 'nullable|string|max:255',
@@ -374,7 +293,6 @@ public function updateAuction(Request $request, $id)
 
     $auction = Auctions::findOrFail($id);
 
-    // Get hours as a string and cast it to numeric for deadline calculation
     $hours = $request->input('hours', '0');
     $numericHours = is_numeric($hours) ? (float) $hours : 0;
     $deadline = $numericHours > 0 ? now()->addHours($numericHours) : now();
@@ -390,7 +308,7 @@ public function updateAuction(Request $request, $id)
         'transmission' => $request->input('transmission'),
         'seats' => $request->input('seats'),
         'auctioneer' => $request->input('auctioneer'),
-        'hours' => $hours, // Keep hours as string in the database
+        'hours' => $hours,
         'deadline' => $deadline,
         'state' => $request->input('state'),
         'link_to_auction' => $request->input('link_to_auction'),
@@ -398,9 +316,248 @@ public function updateAuction(Request $request, $id)
         'auction_registration_link' => $request->input('auction_registration_link'),
         'current_market_retail' => $request->input('current_market_retail'),
     ]);
+    return redirect()->route('auctions.index')->with('success', 'Auction updated successfully!');
 
-    return redirect()->route('auctions.index')->with('message', 'Auction updated successfully.');
+
+}
+    public function showAllAuctions(Request $request)
+{
+    $selectedMake = $request->query('make');
+    $selectedModel = $request->query('model');
+    $selectedBodyType = $request->query('body_type');
+    $selectedBuildDate = $request->query('build_date');
+    $selectedAuctionName = $request->query('auction_name');
+    $selectedLocation = $request->query('location');
+
+    // Build the base query with applied filters
+    $query = Auctions::query();
+
+    if ($selectedMake) {
+        $query->where('make', $selectedMake);
+    }
+    if ($selectedModel) {
+        $query->where('model', $selectedModel);
+    }
+    if ($selectedBodyType) {
+        $query->where('body_type', $selectedBodyType);
+    }
+    if ($selectedBuildDate) {
+        $query->where('build_date', $selectedBuildDate);
+    }
+    if ($selectedAuctionName) {
+        $query->where('auctioneer', $selectedAuctionName);
+    }
+    if ($selectedLocation) {
+        $query->where('state', $selectedLocation);
+    }
+
+    // Fetch makes, models, body types, etc. for the dropdowns
+    $makes = Auctions::pluck('make')->unique();
+    $models = Auctions::pluck('model')->unique();
+    $bodyTypes = Auctions::pluck('body_type')->unique();
+    $buildDates = Auctions::pluck('build_date')->unique();
+    $auctionNames = Auctions::pluck('auctioneer')->unique();
+    $locations = Auctions::pluck('state')->unique();
+
+    $totalcount = Auctions::count();
+
+    $activeTab = $request->query('tab', 'active-auctions');
+
+    // Active auctions query
+    $activeAuctions = Auctions::where(function ($query) use ($selectedMake, $selectedModel, $selectedBodyType, $selectedBuildDate, $selectedAuctionName, $selectedLocation) {
+        if ($selectedMake) {
+            $query->where('make', $selectedMake);
+        }
+        if ($selectedModel) {
+            $query->where('model', $selectedModel);
+        }
+        if ($selectedBodyType) {
+            $query->where('body_type', $selectedBodyType);
+        }
+        if ($selectedBuildDate) {
+            $query->where('build_date', $selectedBuildDate);
+        }
+        if ($selectedAuctionName) {
+            $query->where('auctioneer', $selectedAuctionName);
+        }
+        if ($selectedLocation) {
+            $query->where('state', $selectedLocation);
+        }
+    })
+    ->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) > NOW()')
+->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%Y/%m/%d %H:%i:%s') as formatted_deadline")
+->orderBy('formatted_deadline')
+->paginate(30)
+->appends(array_merge(request()->query(), ['tab' => 'active-auctions']));
+
+    // Past auctions query
+    $pastAuctions = Auctions::where(function ($query) use ($selectedMake, $selectedModel, $selectedBodyType, $selectedBuildDate, $selectedAuctionName, $selectedLocation) {
+        if ($selectedMake) {
+            $query->where('make', $selectedMake);
+        }
+        if ($selectedModel) {
+            $query->where('model', $selectedModel);
+        }
+        if ($selectedBodyType) {
+            $query->where('body_type', $selectedBodyType);
+        }
+        if ($selectedBuildDate) {
+            $query->where('build_date', $selectedBuildDate);
+        }
+        if ($selectedAuctionName) {
+            $query->where('auctioneer', $selectedAuctionName);
+        }
+        if ($selectedLocation) {
+            $query->where('state', $selectedLocation);
+        }
+    })
+    ->whereRaw('DATE_ADD(updated_at, INTERVAL hours HOUR) <= NOW()')
+->selectRaw("*, DATE_FORMAT(DATE_ADD(updated_at, INTERVAL hours HOUR), '%Y/%m/%d %H:%i:%s') as formatted_deadline")
+->orderBy('formatted_deadline', 'desc')
+->paginate(30)
+->appends(array_merge(request()->query(), ['tab' => 'past-auctions']));  // Ensure the tab is active
+
+    return view('auctions.index', compact(
+        'activeAuctions',
+        'pastAuctions',
+        'totalcount',
+        'models',
+        'makes',
+        'bodyTypes',
+        'buildDates',
+        'auctionNames',
+        'locations',
+        'selectedMake',
+        'selectedModel',
+        'selectedBodyType',
+        'selectedBuildDate',
+        'selectedAuctionName',
+        'selectedLocation',
+        'activeTab'
+    ));
 }
 
 
+public function shortlistAuction(Request $request, $id)
+{
+    if (!Auth::check()) {
+        return response()->json(['success' => false, 'message' => 'User is not authenticated.'], 401);
+    }
+
+    $userId = Auth::id(); // Get logged-in user ID
+
+    // Find the auction based on the given ID
+    $auction = Auctions::findOrFail($id);
+
+    // Check if already shortlisted to prevent duplicates
+    if (Shortlist::where('auction_id', $id)->where('user_id', $userId)->exists()) {
+        return response()->json(['success' => false, 'message' => 'This auction is already shortlisted.']);
+    }
+
+    // Use a transaction to ensure both operations succeed or fail together
+    DB::beginTransaction();
+
+    try {
+        // Create a new shortlist entry
+        $shortlist = new Shortlist([
+            'user_id' => $userId,
+            'auction_id' => $auction->id,
+            'name' => $auction->name,
+            'make' => $auction->make,
+            'model' => $auction->model,
+            'build_date' => $auction->build_date,
+            'odometer' => $auction->odometer,
+            'body_type' => $auction->body_type,
+            'fuel' => $auction->fuel,
+            'transmission' => $auction->transmission,
+            'seats' => $auction->seats,
+            'auctioneer' => $auction->auctioneer,
+            'link_to_auction' => $auction->link_to_auction,
+            'other_specs' => $auction->other_specs,
+            'unique_identifier' => $auction->unique_identifier,
+            'state' => $auction->state,
+            'vin' => $auction->vin,
+            'hours' => $auction->hours,
+            'deadline' => $auction->deadline,
+        ]);
+
+        $shortlist->save(); // Save shortlist
+
+
+
+
+        // Commit the transaction
+        DB::commit();
+
+
+        return redirect()->route('auctions.index')->with('success', 'Auction successfully shortlisted and removed from the auctions.');
+
+    } catch (\Exception $e) {
+        // Rollback transaction if there is an error
+        DB::rollBack();
+
+        return redirect()->route('auctions.index')->with('error', 'Something went wrong. Please try again.');
+    }
+}
+
+
+
+public function unshortlistAuction($id)
+{
+    if (!Auth::check()) {
+        return response()->json(['success' => false, 'message' => 'User is not authenticated.'], 401);
+    }
+
+    $user = Auth::id(); // Get logged-in user ID
+
+    // Find the shortlist record for the auction
+    $shortlist = Shortlist::where('auction_id', $id)
+                          ->where('user_id', $user)
+                          ->firstOrFail();
+
+    // Get auction details from the shortlist
+    $auction = new Auctions([
+        'name' => $shortlist->name,
+        'make' => $shortlist->make,
+        'model' => $shortlist->model,
+        'build_date' => $shortlist->build_date,
+        'odometer' => $shortlist->odometer,
+        'body_type' => $shortlist->body_type,
+        'fuel' => $shortlist->fuel,
+        'transmission' => $shortlist->transmission,
+        'seats' => $shortlist->seats,
+        'auctioneer' => $shortlist->auctioneer,
+        'link_to_auction' => $shortlist->link_to_auction,
+        'other_specs' => $shortlist->other_specs,
+        'unique_identifier' => $shortlist->unique_identifier,
+        'state' => $shortlist->state,
+        'vin' => $shortlist->vin,
+        'hours' => $shortlist->hours,
+        'deadline' => $shortlist->deadline,
+    ]);
+
+    // Save auction back to Auctions table
+    $auction->save();
+
+    // Remove from Shortlist table
+    $shortlist->delete();
+
+    return back()->with('success', 'Auction removed from shortlist and restored to auctions.');
+}
+
+
+public function showShortlistedAuctions()
+{
+    if (!Auth::check()) {
+        return response()->json(['success' => false, 'message' => 'User is not authenticated.'], 401);
+    }
+    $user = Auth::id(); // Get logged-in user ID
+
+// Get shortlisted auctions for the logged-in user
+$shortlistedAuctions = Shortlist::where('user_id', $user)
+->with('auction', 'user')
+->paginate(10);
+
+    return view('auctions.shortlisted', compact('shortlistedAuctions'));
+}
 }

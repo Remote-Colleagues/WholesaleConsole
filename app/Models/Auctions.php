@@ -87,7 +87,10 @@ class Auctions extends Model
         return null;
     }
     
-
+    public function shortlists()
+    {
+        return $this->hasMany(Shortlist::class);
+    }
 
 
 }
