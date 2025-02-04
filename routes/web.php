@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalculateController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PartnerController;
 use Illuminate\Support\Facades\Route;
@@ -90,3 +91,12 @@ Route::post('/auctions/{id}/shortlist', [AdminController::class, 'shortlistAucti
 ->name('auctions.shortlist');
 Route::get('/shortlisted-auctions', [AdminController::class, 'showShortlistedAuctions'])->name('auctions.shortlisted');
 Route::delete('/auctions/unshortlist/{id}', [AdminController::class, 'unshortlistAuction'])->name('auctions.unshortlist');
+Route::get('/calculatelist', [CalculateController::class, 'calculatelist'])->name('calculate.list');
+Route::get('calculate/create', [CalculateController::class, 'create'])->name('calculate.create');
+Route::post('calculate/store', [CalculateController::class, 'store'])->name('calculate.store');
+Route::get('/calculate/{id}', [CalculateController::class, 'show'])->name('calculate.details');
+Route::get('/calculate/edit/{id}', [CalculateController::class, 'edit'])->name('calculate.edit');
+Route::put('/calculate/update/{id}', [CalculateController::class, 'update'])->name('calculate.update');
+Route::delete('/calculate/{id}', [CalculateController::class, 'destroy'])->name('calculate.destroy');
+Route::get('/get-transport-cost/{carId}', [CalculateController::class, 'getTransportCost']);
+

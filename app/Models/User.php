@@ -97,5 +97,8 @@ public function consoler()
     {
         return $this->hasOne(Partner::class);
     }
-
+    public function transportCalculators()
+    {
+        return $this->hasMany(TransportCalculator::class);
+    }
 }

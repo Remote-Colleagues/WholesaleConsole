@@ -22,6 +22,8 @@ class Consoler extends Model
         'state',
         'country',
         'post_code',
+        'latitude',
+        'longitude',
         'your_agreement',
         'billing_commencement_period',
         'currency',

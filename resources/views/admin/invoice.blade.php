@@ -267,11 +267,8 @@
             const consolerTable = document.getElementById("consolerTable");
             const partnerTable = document.getElementById("partnerTable");
 
-            // Initially show Consoler Table and hide Partner Table
             consolerTable.style.display = "block";
             partnerTable.style.display = "none";
-
-            // Toggle to Consoler Table
             consolerButton.addEventListener("click", () => {
                 consolerTable.style.display = "block";
                 partnerTable.style.display = "none";
@@ -281,7 +278,6 @@
                 partnerButton.classList.add("button");
             });
 
-            // Toggle to Partner Table
             partnerButton.addEventListener("click", () => {
                 consolerTable.style.display = "none";
                 partnerTable.style.display = "block";
