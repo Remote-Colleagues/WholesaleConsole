@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalculateController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PartnerController;
 use Illuminate\Support\Facades\Route;
@@ -64,4 +65,13 @@ Route::get('/agreement/{id}', [PartnerController::class, 'agreement'])->name('pa
 Route::post('/agreement-submit/{id}', [PartnerController::class, 'submit'])->name('partneragreement.submit');
 Route::get('/view-partneragreement-pdf/{userId}/{agreement}', [PartnerController::class, 'viewAgreementPdf'])->name('view.partneragreement.pdf');
 Route::get('/all-partners-invoices', [PartnerController::class, 'showInvoices'])->name('invoicepartner.show');
+
+Route::get('/calculatelist', [CalculateController::class, 'calculatelist'])->name('calculate.list');
+Route::get('calculate/create', [CalculateController::class, 'create'])->name('calculate.create');
+Route::post('calculate/store', [CalculateController::class, 'store'])->name('calculate.store');
+Route::get('/calculate/{id}', [CalculateController::class, 'show'])->name('calculate.details');
+Route::get('/calculate/edit/{id}', [CalculateController::class, 'edit'])->name('calculate.edit');
+Route::put('/calculate/update/{id}', [CalculateController::class, 'update'])->name('calculate.update');
+Route::delete('/calculate/{id}', [CalculateController::class, 'destroy'])->name('calculate.destroy');
+Route::get('/get-transport-cost/{carId}', [CalculateController::class, 'getTransportCost']);
 

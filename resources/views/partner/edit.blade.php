@@ -1,3 +1,4 @@
+
 @extends('admin.layouts.app')
 @section('headerTitle', 'Edit Partner')
 @section('title', 'Edit Partner')
@@ -126,6 +127,12 @@
                 <input type="number" step="0.01" class="form-control form-control-sm col-sm-3" id="establishment_fee" name="establishment_fee" value="{{ old('establishment_fee', $partner->establishment_fee) }}">
             </div>
 
+            <!-- Premium Charged-->
+            <div class="mb-3 d-flex">
+                <label for="premium_charged" class="form-label col-sm-3">Premium Charged</label>
+                <input type="number" step="0.01" class="form-control form-control-sm col-sm-3" id="premium_charged" name="premium_charged" value="{{ old('establishment_fee', $partner->premium_charged) }}>
+            </div>
+
             <!-- Monthly Subscription Fee (for partner table) -->
             <div class="mb-3 d-flex">
                 <label for="monthly_subscription_fee" class="form-label col-sm-3">Monthly Subscription Fee</label>
@@ -148,33 +155,139 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
+    // Function to add new address fields
+    document.getElementById('operation_locations_container').addEventListener('input', function(e) {
+        const input = e.target;
+        if (input.classList.contains('city-input')) {
+            handleAddressInput(input, 'city');
+        } else if (input.classList.contains('state-input')) {
+            handleAddressInput(input, 'state');
+        } else if (input.classList.contains('country-input')) {
+            handleAddressInput(input, 'country');
+        } else if (input.classList.contains('postcode-input')) {
+            handleAddressInput(input, 'postcode');
+        }
+    });
+
+    async function handleAddressInput(input, fieldType) {
+        const addressSection = input.closest('.operation_location_section');
+        const building = addressSection.querySelector('.building-input').value;
+        const city = addressSection.querySelector('.city-input').value;
+        const state = addressSection.querySelector('.state-input').value;
+        const country = addressSection.querySelector('.country-input').value;
+        const postcode = addressSection.querySelector('.postcode-input').value;
+
+        const addressQuery = `${building} ${city} ${state} ${country} ${postcode}`.trim();
+        const suggestions = await getSuggestions(addressQuery);
+        showSuggestions(input, suggestions, fieldType);
+    }
+
+    async function getSuggestions(query) {
+        const apiKey = 'pk.c955796f3b0f6ba1fcdf78dc7d754395';
+        try {
+            const response = await axios.get(
+                `https://us1.locationiq.com/v1/autocomplete.php?key=${apiKey}&q=${encodeURIComponent(query)}&countrycodes=au&format=json`
+            );
+            return response.data.slice(0, 5);
+        } catch (error) {
+            console.error("Error fetching suggestions:", error);
+            return [];
+        }
+    }
+
+    function showSuggestions(input, suggestions, fieldType) {
+        const suggestionContainer = input.parentElement.querySelector(`.${fieldType}-suggestions`);
+        suggestionContainer.innerHTML = '';
+
+        suggestions.forEach(suggestion => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.textContent = suggestion.display_name;
+            div.onclick = () => selectSuggestion(input, suggestion);
+            suggestionContainer.appendChild(div);
+        });
+    }
+
+    function selectSuggestion(input, suggestion) {
+        const addressSection = input.closest('.operation_location_section');
+        const address = suggestion.address;
+
+        // Auto-fill known fields
+        addressSection.querySelector('.city-input').value = address.city || '';
+        addressSection.querySelector('.state-input').value = address.state || '';
+        addressSection.querySelector('.country-input').value = address.country || '';
+        addressSection.querySelector('.postcode-input').value = address.postcode || '';
+
+        // Auto-fill the 'building' field if available
+        let building = '';
+        if (address.house_number && address.road) {
+            building = `${address.house_number} ${address.road}`;
+        } else if (address.road) {
+            building = address.road;
+        } else if (address.building) {
+            building = address.building;
+        }
+        addressSection.querySelector('.building-input').value = building || '';
+
+        // Update coordinates
+        addressSection.querySelector('.latitude-input').value = suggestion.lat;
+        addressSection.querySelector('.longitude-input').value = suggestion.lon;
+
+        // Clear suggestions
+        addressSection.querySelectorAll('.suggestions').forEach(container => {
+            container.innerHTML = '';
+        });
+    }
+
+    // ... (keep existing addAddress/removeAddress functions, update IDs to classes) ...
     function addAddress() {
-        var addressCount = document.querySelectorAll('.operation_location_section').length;
+        const container = document.getElementById('operation_locations_container');
+        const addressCount = container.querySelectorAll('.operation_location_section').length;
 
-        var newAddressSection = document.createElement('div');
-        newAddressSection.classList.add('operation_location_section', 'mb-3');
-        newAddressSection.id = 'address_' + (addressCount + 1);
+        const newSection = document.createElement('div');
+        newSection.className = 'operation_location_section mb-3';
+        newSection.innerHTML = `
+            <input type="text" class="form-control building-input mb-2" name="operation_location[${addressCount}][building]" placeholder="Building, Apt, Unit" required>
+            <input type="text" class="form-control city-input mb-2" name="operation_location[${addressCount}][city]" placeholder="City" required>
+            <div class="city-suggestions suggestions"></div>
+            <input type="text" class="form-control state-input mb-2" name="operation_location[${addressCount}][state]" placeholder="State" required>
+            <div class="state-suggestions suggestions"></div>
+            <input type="text" class="form-control country-input mb-2" name="operation_location[${addressCount}][country]" placeholder="Country" required>
+            <div class="country-suggestions suggestions"></div>
+            <input type="text" class="form-control postcode-input mb-2" name="operation_location[${addressCount}][post_code]" placeholder="Post Code" required>
+            <div class="postcode-suggestions suggestions"></div>
+            <input type="hidden" class="latitude-input" name="latitude[${addressCount}]">
+            <input type="hidden" class="longitude-input" name="longitude[${addressCount}]">
+            <button type="button" class="btn rounded remove_address_btn" style="color:#5271FF; border-color: #5271FF;" onclick="removeAddress(this)">Remove</button>
+        `;
 
-        newAddressSection.innerHTML = `
-        <input type="text" class="form-control form-control-sm mb-2" name="operation_location[${addressCount}][building]" placeholder="Building, Apt, Unit" required>
-        <input type="text" class="form-control form-control-sm mb-2" name="operation_location[${addressCount}][city]" placeholder="City" required>
-        <input type="text" class="form-control form-control-sm mb-2" name="operation_location[${addressCount}][state]" placeholder="State" required>
-        <input type="text" class="form-control form-control-sm mb-2" name="operation_location[${addressCount}][country]" placeholder="Country" required>
-        <input type="text" class="form-control form-control-sm mb-2" name="operation_location[${addressCount}][post_code]" placeholder="Post Code" required>
-        <button type="button" class="btn remove_address_btn"  style="border-color: #5271FF; color: #5271FF;" onclick="removeAddress('address_' + (${addressCount + 1}))">Remove</button>
-    `;
-        document.getElementById('operation_locations_container').appendChild(newAddressSection);
+        container.appendChild(newSection);
     }
 
-    // Function to remove an address section
-    function removeAddress(addressId) {
-        var addressSection = document.getElementById(addressId);
-        addressSection.remove();
+    function removeAddress(button) {
+        button.closest('.operation_location_section').remove();
     }
+
+    function hideAllSuggestions() {
+        const suggestionContainers = document.querySelectorAll('.suggestions');
+        suggestionContainers.forEach(container => {
+            container.innerHTML = ''; // Clear the suggestions
+        });
+    }
+    document.addEventListener('click', function(event) {
+        const isInputClick = event.target.matches('input[type="text"]');
+        const isSuggestionClick = event.target.matches('.suggestion-item');
+
+        // If the click is outside the input fields and suggestion items, hide all suggestions
+        if (!isInputClick && !isSuggestionClick) {
+            hideAllSuggestions();
+        }
+    });
+
 </script>
-
-
 <script>
     function validatePassword() {
         const password = document.getElementById('password').value;

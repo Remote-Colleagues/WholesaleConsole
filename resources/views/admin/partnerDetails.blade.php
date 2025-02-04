@@ -92,7 +92,7 @@
                     <div class="col-lg-6 mb-4">
                         <div class="card shadow-sm">
                             <div class="card-header" style="color: #5271FF;">
-                                <h5><i class="fas fa-credit-card"></i> Financial Information</h5>
+                                <h5><i class="fas fa-credit-card"></i> Financial Information in AUD</h5>
                             </div>
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
@@ -106,9 +106,13 @@
                                             <span class="text-muted">N/A</span>
                                         @endif
                                     </li>
+                                    <li class="list-group-item">
+                                       <strong>Currency:</strong> AUD
+                                    </li>
                                     @foreach ([
                                         'billing_commencement_date' => 'Billing Commencement Period',
                                         'establishment_fee' => 'Establishment Fee',
+                                        'premium_charged'=>'Premium Charged',
                                         'monthly_subscription_fee' => 'Monthly Subscription Fee',
                                         'csvusernumber' => 'CSV Number'
                                     ] as $field => $label)

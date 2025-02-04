@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -57,9 +58,9 @@ class ConsolerController extends Controller
 
         return redirect()->route('login.form')->with('error', 'You must be logged in as a consoler to access the dashboard.');
     }
+
     public function store(Request $request)
     {
-        // Validate the incoming data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
@@ -84,20 +85,28 @@ class ConsolerController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
         $agreementFullPath = null;
         if ($request->hasFile('your_agreement')) {
             $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
             $agreementFullPath = url('storage/' . $agreementPath); // Generate full URL
         }
+        $address = "{$request->building}, {$request->city}, {$request->state}, {$request->country}, {$request->post_code}";
+        $apiKey = env('LOCATIONIQ_API_KEY');
+        $response = Http::get("https://us1.locationiq.com/v1/search.php", [
+            'key' => $apiKey,
+            'q' => $address,
+            'format' => 'json'
+        ]);
 
+        $data = $response->json();
+        $latitude = $data[0]['lat'] ?? null;
+        $longitude = $data[0]['lon'] ?? null;
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'consoler',
             'user_type' => 'consoler',
-
         ]);
         Consoler::create([
             'user_id' => $user->id,
@@ -121,8 +130,9 @@ class ConsolerController extends Controller
             'admin_fee_date' => $request->admin_fee_date,
             'comm_charge' => $request->comm_charge,
             'comm_charge_date' => $request->comm_charge_date,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
         ]);
-
         return redirect()->route('consoler.list')->with('success', 'Consoler added successfully!');
     }
 
@@ -226,8 +236,25 @@ class ConsolerController extends Controller
             'comm_charge_date' => 'nullable|date',
         ]);
 
+        // Get the full address
+        $address = "{$request->building}, {$request->city}, {$request->state}, {$request->country}, {$request->post_code}";
+        $apiKey = env('LOCATIONIQ_API_KEY');
+
+        // Make a request to LocationIQ to get latitude and longitude
+        $response = Http::get("https://us1.locationiq.com/v1/search.php", [
+            'key' => $apiKey,
+            'q' => $address,
+            'format' => 'json'
+        ]);
+
+        $data = $response->json();
+        $latitude = $data[0]['lat'] ?? null;
+        $longitude = $data[0]['lon'] ?? null;
+
         $user->email_verified_at = null;
+
         try {
+            // Update user details
             $user->update([
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
@@ -239,7 +266,7 @@ class ConsolerController extends Controller
                 $user->save();
             }
 
-            // Update consoler details
+            // Prepare consoler data for update
             $consolerData = [
                 'console_name' => $validatedData['console_name'],
                 'contact_person' => $validatedData['contact_person'],
@@ -250,6 +277,8 @@ class ConsolerController extends Controller
                 'state' => $validatedData['state'],
                 'country' => $validatedData['country'],
                 'post_code' => $validatedData['post_code'],
+                'latitude' => $latitude, // Update latitude
+                'longitude' => $longitude, // Update longitude
                 'billing_commencement_period' => $validatedData['billing_commencement_period'],
                 'establishment_fee' => $validatedData['establishment_fee'],
                 'establishment_fee_date' => $validatedData['establishment_fee_date'],
@@ -261,16 +290,18 @@ class ConsolerController extends Controller
                 'comm_charge_date' => $validatedData['comm_charge_date'],
             ];
 
+            // Check if the 'your_agreement' file is provided and store it
             if ($request->hasFile('your_agreement')) {
                 $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
                 $consolerData['your_agreement'] = $agreementPath;
             }
 
+            // Update the consoler details
             $consoler->update($consolerData);
 
             return redirect()->route('consoler.list')->with('success', 'Consoler updated successfully!');
         } catch (\Exception $e) {
-            // Log the error and redirect with an error message
+            // Log the error and return an error message
             Log::error('Consoler Update Failed: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Failed to update consoler. Please try again.']);
         }

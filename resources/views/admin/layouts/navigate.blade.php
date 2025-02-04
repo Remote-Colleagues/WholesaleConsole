@@ -36,6 +36,13 @@
         </a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link" style="color:#5271FF;" href="{{ route('calculate.list') }}">
+            <i class="fas fa-fw fa-calculator" style="color:#5271FF;"></i>
+            <span>Transport Calculator</span>
+        </a>
+    </li>
+
     <!-- Nav Item - Upcoming Event -->
 {{--     <li class="nav-item">--}}
 {{--        <a class="nav-link" href="#">--}}
