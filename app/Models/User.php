@@ -93,4 +93,9 @@ public function consoler()
     {
         return $this->hasMany(Shortlist::class);
     }
+    public function partner()
+    {
+        return $this->hasOne(Partner::class);
+    }
+
 }

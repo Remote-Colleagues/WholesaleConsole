@@ -39,7 +39,7 @@
 {{--            <!-- Password -->--}}
             <div class="mb-3 d-flex">
                 <label for="password" class="form-label col-sm-3">Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control form-control-sm col-sm-3" id="password" name="password" oninput="validatePassword()">
+                <input type="password" class="form-control form-control-sm col-sm-3" id="password" name="password"  oninput="validatePassword()">
             </div>
 
             <!-- Confirm Password -->
