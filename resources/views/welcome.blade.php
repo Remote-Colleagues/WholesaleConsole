@@ -93,6 +93,13 @@
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <div class="alert alert-danger  font-weight-bold">
+        @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+@endif
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">

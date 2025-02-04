@@ -1,7 +1,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container">
         <div class="copyright text-center">
-            <span aria-readonly="true" style="pointer-events: none; user-select: none;">Copyright &copy; Your Website 2021</span>
+            <p>&copy; {{ date('Y') }} Wholesale Consoler. All rights reserved.</p>
         </div>
     </div>
 </footer>

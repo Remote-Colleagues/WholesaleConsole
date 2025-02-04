@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class=""></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Consoler</div>
+        <div class="sidebar-brand-text mx-3" style="color:#5271FF;">Consoler</div>
     </a>
 
     <!-- Divider -->
@@ -14,8 +14,8 @@
 
     <!-- Nav Item - Consolers -->
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('consoler.profile', Auth::user()->id) }}">
-            <i class="fas fa-fw fa-cogs"></i>
+        <a class="nav-link" style="color:#5271FF;" href="{{ route('consoler.profile', Auth::user()->id) }}">
+            <i class="fas fa-fw fa-user" style="color:#5271FF;"></i>
             <span>Your Profile</span>
         </a>
     </li>
@@ -25,12 +25,20 @@
 
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">
-        <a class="nav-link" href="{{route('auctions.car')}}">
-            <i class="fas fa-fw fa-bullhorn"></i>
+        <a class="nav-link" style="color:#5271FF;" href="{{route('auctions.car')}}">
+            <i class="fas fa-fw fa-bullhorn" style="color:#5271FF;"></i>
             <span>Cars at Auction</span>
         </a>
     </li>
+    <hr class="sidebar-divider">
 
+    <!-- Nav Item - Promote your listing -->
+    <li class="nav-item">
+        <a class="nav-link" style="color:#5271FF;" href="{{route('invoices.show')}}">
+            <i class="fas fa-fw fa-file-invoice-dollar" style="color:#5271FF;"></i>
+            <span>Invoice</span>
+        </a>
+    </li>
 
 <!-- Divider -->
 <hr class="sidebar-divider">
@@ -39,8 +47,8 @@
 
 <li class="nav-item">
     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
-        <i class="fas fa-fw fa-sign-out-alt"></i>
-        <span>Logout</span>
+        <i class="fas fa-fw fa-sign-out-alt" style="color:#5271FF;"></i>
+        <span style="color:#5271FF;">Logout</span>
     </a>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf

@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Auctions;
+use PDF;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\Invoice;
+use setasign\Fpdi\Fpdi;
+use App\Models\Auctions;
 use App\Models\Consoler;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class ConsolerController extends Controller
@@ -19,6 +26,28 @@ class ConsolerController extends Controller
             return view('consoler.consoler_create');
         }
         return redirect()->route('login.form')->with('error', 'You must be logged in as an admin to access this page.');
+    }
+    public function agreement($id)
+    {
+        $consoler = Consoler::where('user_id', $id)->firstOrFail();
+        $user = User::findOrFail($consoler->user_id);
+        $admin = Admin::first();
+        if ($user->status !== 'active') {
+            Auth::logout();
+            session()->flush();
+            return redirect('/')->withErrors(['error' => 'Your account is inactive. Please contact the admin.']);
+        }
+        if ($user->email_verified_at !== null) {
+            return redirect()->route('consoler.dashboard');
+        }
+        return view('consoler.agreement', compact('consoler', 'user','admin'));
+    }
+    public function submit(Request $request , $id)
+    {
+        $user = User::findOrFail($id);
+        $user->email_verified_at =Carbon:: now();
+        $user->save();
+        return redirect()->route('consoler.dashboard')->with('status', 'Agreement accepted successfully!');
     }
 
     public function Dashboard()
@@ -33,7 +62,6 @@ class ConsolerController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the incoming data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
@@ -58,20 +86,29 @@ class ConsolerController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
         $agreementFullPath = null;
         if ($request->hasFile('your_agreement')) {
             $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
             $agreementFullPath = url('storage/' . $agreementPath); // Generate full URL
         }
+        $address = "{$request->building}, {$request->city}, {$request->state}, {$request->country}, {$request->post_code}";
+        $apiKey = env('LOCATIONIQ_API_KEY');
+        $response = Http::get("https://us1.locationiq.com/v1/search.php", [
+            'key' => $apiKey,
+            'q' => $address,
+            'format' => 'json'
+        ]);
 
+        $data = $response->json();
+        $latitude = $data[0]['lat'] ?? null;
+        $longitude = $data[0]['lon'] ?? null;
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'consoler', 
+            'role' => 'consoler',
+            'user_type' => 'consoler',
         ]);
-
         Consoler::create([
             'user_id' => $user->id,
             'console_name' => $request->console_name,
@@ -85,7 +122,7 @@ class ConsolerController extends Controller
             'post_code' => $request->post_code,
             'your_agreement' => $agreementFullPath,
             'billing_commencement_period' => $request->billing_commencement_period,
-            'currency' => 'AUD', 
+            'currency' => 'AUD',
             'establishment_fee' => $request->establishment_fee,
             'establishment_fee_date' => $request->establishment_fee_date,
             'monthly_subscription_fee' => $request->monthly_subscription_fee,
@@ -94,8 +131,9 @@ class ConsolerController extends Controller
             'admin_fee_date' => $request->admin_fee_date,
             'comm_charge' => $request->comm_charge,
             'comm_charge_date' => $request->comm_charge_date,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
         ]);
-
         return redirect()->route('consoler.list')->with('success', 'Consoler added successfully!');
     }
 
@@ -107,36 +145,72 @@ class ConsolerController extends Controller
 
     public function show($id)
     {
+        $admin = Admin::first();
         $user = User::where('id', $id)
-            ->with('consoler') 
+            ->with('consoler')
             ->firstOrFail();
-        return view('admin.consolerDetails', compact('user'));
+        return view('admin.consolerDetails', compact('user','admin'));
     }
+
+    public function viewAgreementPdf($id, $agreement)
+    {
+        $user = User::findOrFail($id);
+        $agreementTitle = ['master' => 'Master Agreement', 'term' => 'Terms and Conditions', 'services' => 'Service Schedule Agreement'][$agreement] ?? 'Agreement';
+        $admin = Admin::first();
+        $serviceSchedule = $user->consoler->your_agreement ?? null;
+        $master = $admin->master_agreement_for_wconsoler ?? null;
+        $term = $admin->terms_conditions_wc_consolers ?? null;
+        $agreementsData = [
+            'master' => $master ? storage_path('app/public/term/' . basename($master)) : null,
+            'term' => $term ? storage_path('app/public/term/' . basename($term)) : null,
+            'services' => $serviceSchedule ? storage_path('app/public/agreements/' . basename($serviceSchedule)) : null,
+        ];
+        if (!array_key_exists($agreement, $agreementsData) || !$agreementsData[$agreement]) {
+            abort(404, 'Agreement not found');
+        }
+        $firstPage = PDF::loadView('admin.agreement', compact('user', 'agreementTitle', 'agreementsData'));
+        $firstPagePath = storage_path('app/public/temp_first_page.pdf');
+        $firstPage->save($firstPagePath);
+        $pdf = new Fpdi();
+        $pdf->AddPage();
+        $pdf->setSourceFile($firstPagePath);
+        $templateId = $pdf->importPage(1);
+        $pdf->useTemplate($templateId);
+        $agreementPdfPath = $agreementsData[$agreement];
+        $pageCount = $pdf->setSourceFile($agreementPdfPath);
+        for ($i = 1; $i <= $pageCount; $i++) {
+            $templateId = $pdf->importPage($i);
+            $pdf->AddPage();
+            $pdf->useTemplate($templateId);
+        }
+        return response($pdf->Output(), 200)
+            ->header('Content-Type', 'application/pdf');
+    }
+
 
     public function showdetail($id)
     {
+        $admin = Admin::first();
         $user = User::where('id', $id)
-            ->with('consoler') // Assuming you have a consoler relationship defined
+            ->with('consoler')
             ->firstOrFail();
-
-        // Return the consoler details view with the user data
-        return view('consoler.consolerDetails', compact('user'));
+        return view('consoler.consolerDetails', compact('user','admin'));
     }
+
+
     public function edit($id)
     {
         $user = User::findOrFail($id);
         $consoler = Consoler::where('user_id', $user->id)->firstOrFail();
-        return view('consoler.update', compact('user', 'consoler'));
+        return view('consoler.update', compact('user', 'consoler' ));
     }
 
 
     public function update(Request $request, $id)
     {
-        // Find the consoler and associated user
         $consoler = Consoler::findOrFail($id);
         $user = User::findOrFail($consoler->user_id);
 
-        // Validate incoming data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
@@ -163,6 +237,23 @@ class ConsolerController extends Controller
             'comm_charge_date' => 'nullable|date',
         ]);
 
+        // Get the full address
+        $address = "{$request->building}, {$request->city}, {$request->state}, {$request->country}, {$request->post_code}";
+        $apiKey = env('LOCATIONIQ_API_KEY');
+
+        // Make a request to LocationIQ to get latitude and longitude
+        $response = Http::get("https://us1.locationiq.com/v1/search.php", [
+            'key' => $apiKey,
+            'q' => $address,
+            'format' => 'json'
+        ]);
+
+        $data = $response->json();
+        $latitude = $data[0]['lat'] ?? null;
+        $longitude = $data[0]['lon'] ?? null;
+
+        $user->email_verified_at = null;
+
         try {
             // Update user details
             $user->update([
@@ -176,7 +267,7 @@ class ConsolerController extends Controller
                 $user->save();
             }
 
-            // Update consoler details
+            // Prepare consoler data for update
             $consolerData = [
                 'console_name' => $validatedData['console_name'],
                 'contact_person' => $validatedData['contact_person'],
@@ -187,6 +278,8 @@ class ConsolerController extends Controller
                 'state' => $validatedData['state'],
                 'country' => $validatedData['country'],
                 'post_code' => $validatedData['post_code'],
+                'latitude' => $latitude, // Update latitude
+                'longitude' => $longitude, // Update longitude
                 'billing_commencement_period' => $validatedData['billing_commencement_period'],
                 'establishment_fee' => $validatedData['establishment_fee'],
                 'establishment_fee_date' => $validatedData['establishment_fee_date'],
@@ -198,16 +291,18 @@ class ConsolerController extends Controller
                 'comm_charge_date' => $validatedData['comm_charge_date'],
             ];
 
+            // Check if the 'your_agreement' file is provided and store it
             if ($request->hasFile('your_agreement')) {
                 $agreementPath = $request->file('your_agreement')->store('agreements', 'public');
                 $consolerData['your_agreement'] = $agreementPath;
             }
 
+            // Update the consoler details
             $consoler->update($consolerData);
 
             return redirect()->route('consoler.list')->with('success', 'Consoler updated successfully!');
         } catch (\Exception $e) {
-            // Log the error and redirect with an error message
+            // Log the error and return an error message
             Log::error('Consoler Update Failed: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Failed to update consoler. Please try again.']);
         }
@@ -251,6 +346,14 @@ class ConsolerController extends Controller
             'selectedAuctionName' => $filters['auction_name'] ?? null,
             'selectedLocation' => $filters['state'] ?? null,
         ]);
+    }
+    public function showInvoices()
+    {
+        $id = auth()->id();
+        $consolerInvoices = Invoice::where('user_id', $id)
+            ->where('status', '!=', 'hide')
+            ->paginate(6);
+        return view('consoler.invoice', compact('consolerInvoices'));
     }
 
 }

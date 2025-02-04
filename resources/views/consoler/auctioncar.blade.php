@@ -106,7 +106,7 @@
 
                 <!-- Table -->
                 <table class="table table-borderless">
-                    <thead class="text-white" style="background-color: #5271FF">
+                    <thead class="shadow-sm " style="color: #5271FF">
                     <tr>
                         <th></th>
                         <th>Name</th>
