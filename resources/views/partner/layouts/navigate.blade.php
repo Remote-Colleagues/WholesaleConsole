@@ -9,9 +9,6 @@
         <div class="sidebar-brand-text mx-3" style="color:#5271FF;">Partner</div>
     </a>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
     <!-- Nav Item - Partners -->
     <li class="nav-item">
         <a class="nav-link" style="color:#5271FF;" href="{{ route('partner.profile', Auth::user()->id) }}">
@@ -20,9 +17,6 @@
         </a>
     </li>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">
         <a class="nav-link" style="color:#5271FF;" href="{{route('auction.car')}}">
@@ -30,7 +24,6 @@
             <span>Cars at Auction</span>
         </a>
     </li>
-    <hr class="sidebar-divider">
 
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">

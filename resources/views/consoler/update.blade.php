@@ -167,8 +167,8 @@
             </div>
 
             <!-- Buttons -->
-            <button type="submit" class="btn btn-success" id="submitBtn" disabled>Update</button>
-            <a href="{{ route('consoler.list') }}" class="btn btn-danger">Cancel</a>
+            <button type="submit" class="btn " style="background-color: #5271FF; color: #FFFFFF" id="submitBtn" >Update</button>
+            <a href="{{ route('consoler.list') }}" class="btn" style="color: #5271FF">Cancel</a>
         </form>
     </div>
 </div>

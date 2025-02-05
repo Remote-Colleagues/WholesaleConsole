@@ -128,9 +128,9 @@
             </div>
 
             <!-- Premium Charged-->
-            <div class="mb-3 d-flex">
+            <div class="mb-3 d-flex" >
                 <label for="premium_charged" class="form-label col-sm-3">Premium Charged</label>
-                <input type="number" step="0.01" class="form-control form-control-sm col-sm-3" id="premium_charged" name="premium_charged" value="{{ old('establishment_fee', $partner->premium_charged) }}>
+                <input type="number" step="0.01" class="form-control form-control-sm col-sm-3" id="premium_charged" name="premium_charged" value="{{ old('premium_charged', $partner->premium_charged) }}">
             </div>
 
             <!-- Monthly Subscription Fee (for partner table) -->

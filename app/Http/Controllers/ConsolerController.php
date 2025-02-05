@@ -213,7 +213,8 @@ class ConsolerController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:8|confirmed',
+//            'password' => 'nullable|min:8|confirmed',
+            'password' => 'nullable|min:8',
             'status' => 'required|in:active,inactive',
             'console_name' => 'required|string|max:255',
             'contact_person' => 'required|string|max:255',
@@ -261,7 +262,8 @@ class ConsolerController extends Controller
                 'status' => $validatedData['status'],
             ]);
 
-            if (!empty($validatedData['password'])) {
+//            if (!empty($validatedData['password'])) {
+            if ($request->filled('password')) {
                 $user->password = Hash::make($validatedData['password']);
                 $user->save();
             }

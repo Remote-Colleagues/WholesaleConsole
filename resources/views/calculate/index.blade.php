@@ -19,7 +19,7 @@
         }
 
         .btn-clear {
-            background-color: #FF5C5C;
+            background-color: #5271FF;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -33,7 +33,7 @@
             margin-top: 20px;
             font-size: 18px;
             color: #5271FF;
-            font-weight: bold;
+            /*font-weight: bold;*/
         }
     </style>
     <!-- Include Select2 CSS -->
@@ -116,19 +116,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3 d-flex">
-                                <label for="to-field" class="form-label col-sm-3">To:</label>
-                                <select id="to-field" class="form-control form-control-sm col-sm-3" required>
-                                    <option value="">Choose an Address</option>
-                                    @foreach($consolers as $consoler)
-                                        <option value="{{ $consoler->id }}"
-                                                data-lat="{{ $consoler->latitude }}"
-                                                data-lng="{{ $consoler->longitude }}">
-                                            {{ $consoler->building }}, {{ $consoler->city }}, {{ $consoler->state }}, {{ $consoler->country }}, {{ $consoler->post_code }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+
 
                             <div class="mb-3 d-flex">
                                 <label for="from-field" class="form-label col-sm-3">From:</label>
@@ -152,7 +140,19 @@
                                     @endforeach
                                 </select>
                             </div>
-
+                            <div class="mb-3 d-flex">
+                                <label for="to-field" class="form-label col-sm-3">To:</label>
+                                <select id="to-field" class="form-control form-control-sm col-sm-3" required>
+                                    <option value="">Choose an Address</option>
+                                    @foreach($consolers as $consoler)
+                                        <option value="{{ $consoler->id }}"
+                                                data-lat="{{ $consoler->latitude }}"
+                                                data-lng="{{ $consoler->longitude }}">
+                                            {{ $consoler->building }}, {{ $consoler->city }}, {{ $consoler->state }}, {{ $consoler->country }}, {{ $consoler->post_code }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <button type="button" class="btn-calculate" id="calculate-button">Calculate</button>
                             <button type="button" class="btn-clear" id="clear-button">Clear</button>
