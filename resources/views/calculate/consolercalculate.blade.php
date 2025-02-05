@@ -45,12 +45,15 @@
         </div>
         <div class="card-body">
             <form id="calculate-form">
+
                 <div class="mb-3 d-flex">
                     <label for="car-select" class="form-label col-sm-3">Choose your Car:</label>
                     <select id="car-select" class="form-control form-control-sm col-sm-3" required>
                         <option value="">Year, Make, Model, Odo, Auction</option>
                         @foreach($auctions as $auction)
-                            <option value="{{ $auction->unique_identifier }}" data-auctioneer="{{ $auction->auctioneer }}">
+                            <option value="{{ $auction->unique_identifier }}"
+                                    data-auctioneer="{{ $auction->auctioneer }}"
+                                    data-state="{{ $auction->state }}">
                                 {{ $auction->name }}, {{ $auction->make }}, {{ $auction->model }}, {{ $auction->odometer }}, {{ $auction->auctioneer }}
                             </option>
                         @endforeach
@@ -68,26 +71,33 @@
                                 $longitudes = explode(';', $partner->longitude);
                             @endphp
                             @foreach($addresses as $index => $address)
+                                @php
+                                    $addressParts = explode(',', $address);
+                                    $state = isset($addressParts[2]) ? trim($addressParts[2]) : '';
+                                @endphp
                                 <option value="{{ $partner->id . '-' . $index }}"
                                         data-partner-id="{{ $partner->id }}"
                                         data-partner-name="{{ $partner->partner_name }}"
                                         data-location="{{ $address }}"
                                         data-lat1="{{ $latitudes[$index] ?? '' }}"
-                                        data-lng1="{{ $longitudes[$index] ?? '' }}">
+                                        data-lng1="{{ $longitudes[$index] ?? '' }}"
+                                        data-state1="{{ $state }}">
                                     {{ $address }}
                                 </option>
                             @endforeach
                         @endforeach
                     </select>
-                    </div>
+                </div>
+
+
                 <div class="mb-3 d-flex">
                     <label for="to-field" class="form-label col-sm-3">To:</label>
                     <select id="to-field" class="form-control form-control-sm col-sm-3" required>
-                        <option value="">Choose an Address</option>
                         @foreach($consolers as $consoler)
                             <option value="{{ $consoler->id }}"
                                     data-lat="{{ $consoler->latitude }}"
-                                    data-lng="{{ $consoler->longitude }}">
+                                    data-lng="{{ $consoler->longitude }}"
+                                    @if($loggedInConsoler && $loggedInConsoler->id == $consoler->id) selected @endif>
                                 {{ $consoler->building }}, {{ $consoler->city }}, {{ $consoler->state }}, {{ $consoler->country }}, {{ $consoler->post_code }}
                             </option>
                         @endforeach
@@ -109,41 +119,42 @@
 
 @section('scripts')
 
+<script>
+    $(document).ready(function () {
+        $('#car-select').select2({ width: '25%' });
 
-    <script>
-        $(document).ready(function () {
-            $('#car-select').select2({ width: '25%' });
+        $('#car-select').on('change', function () {
+            const selectedCar = $('#car-select option:selected');
+            const auctioneer = selectedCar.attr('data-auctioneer');
+            const carState = selectedCar.attr('data-state');
+            const fromField = $('#from-field');
 
-            $('#car-select').on('change', function () {
-                const selectedCar = $('#car-select option:selected');
-                const auctioneer = selectedCar.attr('data-auctioneer');
-                const fromField = $('#from-field');
+            let matchFound = false;
+            fromField.find('option').each(function () {
+                const partnerName = $(this).attr('data-partner-name');
+                const partnerState = $(this).attr('data-state1'); // Get state from partner address
 
-                let matchFound = false;
-                fromField.find('option').each(function () {
-                    const partnerName = $(this).attr('data-partner-name');
-
-                    if (auctioneer === partnerName) {
-                        $(this).show();
-                        $(this).prop('selected', true);
-                        matchFound = true;
-                    } else {
-                        $(this).hide();
-                        $(this).prop('selected', false);
-                    }
-                });
-
-                if (!matchFound) {
-                    alert("No matching partner address found.");
-                    fromField.val("");
+                if (auctioneer === partnerName && carState === partnerState) {
+                    $(this).show();
+                    $(this).prop('selected', true); // Auto-select the matching option
+                    matchFound = true;
+                } else {
+                    $(this).hide();
+                    $(this).prop('selected', false);
                 }
             });
 
-            document.getElementById('clear-button').addEventListener('click', function () {
-                window.location.reload();
-            });
+            if (!matchFound) {
+                alert("No matching partner address found.");
+                fromField.val(""); // Clear the selection if no match found
+            }
         });
-    </script>
+
+        document.getElementById('clear-button').addEventListener('click', function () {
+            window.location.reload();
+        });
+    });
+</script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const calculateButton = document.getElementById("calculate-button");

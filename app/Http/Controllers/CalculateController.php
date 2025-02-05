@@ -138,15 +138,16 @@ class CalculateController extends Controller
         ]);
     }
 
+
     public function calculateconsoler(Request $request)
     {
         $auctions = Auctions::all();
         $partners = Partner::all();
         $consolers = Consoler::where('user_id', $request->user()->id)->get();
         $transportCalculators = TransportCalculator::with('user')->get();
-        return view('calculate.consolercalculate', compact('transportCalculators', 'auctions', 'consolers', 'partners'));
+        $loggedInConsoler = Consoler::where('user_id', $request->user()->id)->first();
+        return view('calculate.consolercalculate', compact('transportCalculators', 'auctions', 'consolers', 'partners', 'loggedInConsoler'));
     }
-
 
 
 }
