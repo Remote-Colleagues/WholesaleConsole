@@ -25,7 +25,8 @@ class CalculateController extends Controller
     public function create()
     {
         $bodyTypes = \DB::table('auctions')->pluck('body_type')->unique();
-        $currentBodyType = TransportCalculator::first()->body_type;
+        $transportCalculator = TransportCalculator::first();
+        $currentBodyType = $transportCalculator ? $transportCalculator->body_type : null;
         $users = User::all();
         return view('calculate.create', compact('users', 'bodyTypes', 'currentBodyType'));
 
@@ -66,7 +67,7 @@ class CalculateController extends Controller
     {
         $bodyTypes = \DB::table('auctions')->pluck('body_type')->unique();
         $users = User::all();
-        $currentBodyType = TransportCalculator::pluck('body_type')->toArray();  // This will give you an array of body types
+        $currentBodyType = TransportCalculator::pluck('body_type')->toArray();
         $transportCalculator = TransportCalculator::findOrFail($id);
         return view('calculate.edit', compact('transportCalculator', 'users', 'bodyTypes', 'currentBodyType'));
     }
@@ -115,34 +116,35 @@ class CalculateController extends Controller
         if (!$auction) {
             return response()->json(['error' => 'Car not found'], 404);
         }
-
         $transportCost = TransportCalculator::where('body_type', $auction->body_type)->first();
         if (!$transportCost) {
-            // Default to "other" if body type not found
             $transportCost = TransportCalculator::where('body_type', 'other')->first();
         }
-
         $stateChargeType = $request->get('stateChargeType', 'same_state_charge');
-
-        // Check if body type of auction and transport cost match
         if ($auction->body_type !== $transportCost->body_type) {
-            $transportCost = TransportCalculator::where('body_type', 'other')->first(); // Default to "other"
+            $transportCost = TransportCalculator::where('body_type', 'other')->first();
         }
-
         if (!$transportCost) {
             return response()->json(['error' => 'Transport cost for the selected body type not found'], 404);
         }
-
         $catcost = $transportCost->categories;
         $addcharge = $transportCost->additional_charge_for_size;
         $cost = $catcost * $addcharge;
-
         return response()->json([
             'per_km_charge' => $transportCost->per_km_charge,
             'state_charge' => $transportCost->$stateChargeType,
             'size_charge' => $transportCost->$cost,
             'additional_charges' => $transportCost->additional_charges
         ]);
+    }
+
+    public function calculateconsoler(Request $request)
+    {
+        $auctions = Auctions::all();
+        $partners = Partner::all();
+        $consolers = Consoler::where('user_id', $request->user()->id)->get();
+        $transportCalculators = TransportCalculator::with('user')->get();
+        return view('calculate.consolercalculate', compact('transportCalculators', 'auctions', 'consolers', 'partners'));
     }
 
 

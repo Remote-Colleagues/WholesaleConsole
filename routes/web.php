@@ -31,8 +31,8 @@ Route::get('car-auctions', [ConsolerController::class, 'showAllAuctions'])->name
 Route::get('/all-consolers-invoices', [ConsolerController::class, 'showInvoices'])->name('invoices.show');
 Route::get('/consoler/dashboard', [ConsolerController::class, 'Dashboard'])->name('consoler.dashboard');
 Route::get('/consolers/{id}', [ConsolerController::class, 'show'])->name('consoler.details');
-Route::get('/agreement/{id}', [ConsolerController::class, 'agreement'])->name('agreement.show');
-Route::post('/agreement-submit/{id}', [ConsolerController::class, 'submit'])->name('agreement.submit');
+Route::get('/agreement/cons/{id}', [ConsolerController::class, 'agreement'])->name('agreement.show');
+Route::post('/agreement-submit/cons/{id}', [ConsolerController::class, 'submit'])->name('agreement.submit');
 Route::get('/view-agreement-pdf/{userId}/{agreement}', [ConsolerController::class, 'viewAgreementPdf'])->name('view.agreement.pdf');
 
 Route::post('/update-status', [Controller::class, 'updateStatus']);
@@ -74,4 +74,5 @@ Route::get('/calculate/edit/{id}', [CalculateController::class, 'edit'])->name('
 Route::put('/calculate/update/{id}', [CalculateController::class, 'update'])->name('calculate.update');
 Route::delete('/calculate/{id}', [CalculateController::class, 'destroy'])->name('calculate.destroy');
 Route::get('/get-transport-cost/{carId}', [CalculateController::class, 'getTransportCost']);
+Route::get('/calculateconsoler', [CalculateController::class, 'calculateconsoler'])->name('calculate.consoler');
 

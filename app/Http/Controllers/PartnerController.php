@@ -258,7 +258,6 @@ class PartnerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Find the partner and user based on partner ID
         $partner = Partner::findOrFail($id);
         $user = User::findOrFail($partner->user_id);
 
@@ -288,12 +287,10 @@ class PartnerController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-
-        // Update user information
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->email_verified_at = null; // Reset email verification status
-        $user->status = $request->status ?? $user->status; // Only update if status is provided
+        $user->email_verified_at = null;
+        $user->status = $request->status ?? $user->status;
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }

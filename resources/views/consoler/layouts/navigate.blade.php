@@ -20,9 +20,6 @@
         </a>
     </li>
 
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">
         <a class="nav-link" style="color:#5271FF;" href="{{route('auctions.car')}}">
@@ -30,7 +27,6 @@
             <span>Cars at Auction</span>
         </a>
     </li>
-    <hr class="sidebar-divider">
 
     <!-- Nav Item - Promote your listing -->
     <li class="nav-item">
@@ -40,8 +36,15 @@
         </a>
     </li>
 
+    <!-- Nav Item - calaculate the charges  -->
+    <li class="nav-item">
+        <a class="nav-link" style="color:#5271FF;" href="{{route('calculate.consoler')}}">
+            <i class="fas fa-fw fa-calculator" style="color:#5271FF;"></i>
+            <span>Calculate</span>
+        </a>
+    </li>
 <!-- Divider -->
-<hr class="sidebar-divider">
+{{--<hr class="sidebar-divider">--}}
 
 <!-- Conditional Login/Logout Button -->
 
