@@ -132,6 +132,7 @@
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
 
+
             <!-- Your Agreement -->
             <div class="mb-3 d-flex">
                 <label for="your_agreement" class="form-label col-sm-3">Your Agreement <span class="text-danger">*</span></label>
@@ -173,14 +174,13 @@
                 <input type="number" class="form-control form-control-sm col-sm-3" id="comm_charge" name="comm_charge" step="0.01">
                 <input type="date" class="form-control form-control-sm col-sm-3" id="comm_charge_date" name="comm_charge_date">
             </div>
-
             <!-- Buttons -->
             <button type="submit" class="btn btn-success" id="submitBtn" disabled>Save</button>
             <a href="{{ route('consoler.list') }}" class="btn btn-danger">Cancel</a>
         </form>
     </div>
 </div>
-
+@include('map')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -218,7 +218,6 @@
             getSuggestions(field, locationInput);
         });
     });
-    // Function to hide all suggestion dropdowns
     function hideAllSuggestions() {
         const suggestionContainers = document.querySelectorAll('.suggestions');
         suggestionContainers.forEach(container => {
@@ -228,8 +227,6 @@
     document.addEventListener('click', function(event) {
         const isInputClick = event.target.matches('input[type="text"]');
         const isSuggestionClick = event.target.matches('.suggestion-item');
-
-        // If the click is outside the input fields and suggestion items, hide all suggestions
         if (!isInputClick && !isSuggestionClick) {
             hideAllSuggestions();
         }
@@ -254,29 +251,6 @@
             console.error("Error fetching suggestions:", error);
         }
     }
-    // function selectSuggestion(field, suggestion) {
-    //     document.getElementById(field).value = suggestion[field] || suggestion.display_name;
-    //     if (suggestion.address) {
-    //         const address = suggestion.address;
-    //         if (address.country && document.getElementById('country')) {
-    //             document.getElementById('country').value = address.country;
-    //         }
-    //         if (address.postcode && document.getElementById('post_code')) {
-    //             document.getElementById('post_code').value = address.postcode;
-    //         }
-    //         if (address.state && document.getElementById('state')) {
-    //             document.getElementById('state').value = address.state;
-    //         }
-    //         if (address.city && document.getElementById('city')) {
-    //             document.getElementById('city').value = address.city;
-    //         }
-    //     }
-    //     document.getElementById(`${field}Suggestions`).innerHTML = '';
-    //     if (suggestion.lat && suggestion.lon) {
-    //         document.getElementById('latitude').value = suggestion.lat;
-    //         document.getElementById('longitude').value = suggestion.lon;
-    //     }
-    // }
     function selectSuggestion(field, suggestion) {
         document.getElementById(field).value = suggestion[field] || suggestion.display_name;
 
@@ -294,11 +268,7 @@
             if (address.city && document.getElementById('city')) {
                 document.getElementById('city').value = address.city;
             }
-
-            // Extract the rest of the address for the building field
             let building = suggestion.display_name;
-
-            // Remove known fields from the full address
             if (address.city) {
                 building = building.replace(address.city, "").trim();
             }

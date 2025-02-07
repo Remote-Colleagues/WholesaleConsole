@@ -122,21 +122,45 @@
 <script>
     $(document).ready(function () {
         $('#car-select').select2({ width: '25%' });
+        const stateMapping = {
+            "nsw": "New South Wales",
+            "NSW": "New South Wales",
+            "vic": "Victoria",
+            "VIC": "Victoria",
+            "qld": "Queensland",
+            "QLD": "Queensland",
+            "wa": "Western Australia",
+            "WA": "Western Australia",
+            "sa": "South Australia",
+            "SA": "South Australia",
+            "tas": "Tasmania",
+            "TAS": "Tasmania",
+            "act": "Australian Capital Territory",
+            "ACT": "Australian Capital Territory",
+            "nt": "Northern Territory",
+            "NT": "Northern Territory"
+        };
 
         $('#car-select').on('change', function () {
             const selectedCar = $('#car-select option:selected');
             const auctioneer = selectedCar.attr('data-auctioneer');
-            const carState = selectedCar.attr('data-state');
-            const fromField = $('#from-field');
+            let carState = selectedCar.attr('data-state'); // Auction state (short form)
 
+            // Convert auction state abbreviation to full name if it exists in the mapping
+            if (stateMapping.hasOwnProperty(carState)) {
+                carState = stateMapping[carState];
+            }
+
+            const fromField = $('#from-field');
             let matchFound = false;
+
             fromField.find('option').each(function () {
                 const partnerName = $(this).attr('data-partner-name');
-                const partnerState = $(this).attr('data-state1'); // Get state from partner address
+                const partnerState = $(this).attr('data-state1'); // Partner already has full state name
 
                 if (auctioneer === partnerName && carState === partnerState) {
                     $(this).show();
-                    $(this).prop('selected', true); // Auto-select the matching option
+                    $(this).prop('selected', true);
                     matchFound = true;
                 } else {
                     $(this).hide();
@@ -146,7 +170,7 @@
 
             if (!matchFound) {
                 alert("No matching partner address found.");
-                fromField.val(""); // Clear the selection if no match found
+                fromField.val("");
             }
         });
 
@@ -155,7 +179,8 @@
         });
     });
 </script>
-    <script>
+
+<script>
         document.addEventListener("DOMContentLoaded", () => {
             const calculateButton = document.getElementById("calculate-button");
             const resultField = document.getElementById("result");
@@ -181,21 +206,30 @@
                         resultField.style.display = "block";
                         return;
                     }
+
                     const fromAddress = fromOption.getAttribute('data-location');
                     const fromState = fromAddress.split(',')[2]?.trim() || '';
-
                     const toState = toOption.textContent.split(',')[2]?.trim() || '';
-                    let stateChargeType = "same_state_charge";
-                    if (fromState !== toState) {
-                        stateChargeType = "cross_state_charge";
-                    }
+
+                    let stateChargeType = (fromState !== toState) ? "cross_state_charge" : "same_state_charge";
+
+                    // Fetch Transport Cost
                     const transportCost = await fetchTransportCost(car, stateChargeType);
-                    const distance = calculateDistance(fromLat, fromLng, toLat, toLng);
+                    const distance = await drawRoute(fromLat, fromLng, toLat, toLng);
+                    if (distance === null) {
+                        resultField.textContent = "Error fetching route distance.";
+                        resultField.style.display = "block";
+                        return;
+                    }
+
+                    // Calculate total cost
                     const perKmCharge = parseFloat(transportCost.per_km_charge);
                     const stateCharge = parseFloat(transportCost.state_charge);
                     const sizeCharge = parseFloat(transportCost.size_charge) || 0;
                     const additionalCharge = parseFloat(transportCost.additional_charges) || 0;
                     const totalCost = ((distance * perKmCharge) + stateCharge + sizeCharge + additionalCharge).toFixed(2);
+
+                    // Display results
                     resultField.textContent = `Total Cost: $ ${totalCost} AUD`;
                     resultField.style.display = "block";
 
@@ -208,17 +242,7 @@
             });
         });
 
-        function calculateDistance(lat1, lng1, lat2, lng2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLng = (lng2 - lng1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLng / 2) * Math.sin(dLng / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
-
+        // Function to fetch transport cost
         async function fetchTransportCost(carId, stateChargeType) {
             try {
                 const response = await fetch(`/get-transport-cost/${carId}?stateChargeType=${stateChargeType}`);
@@ -234,5 +258,38 @@
                 return { per_km_charge: 1, state_charge: 0, size_charge: 0, additional_charges: 0 }; // Default values in case of error
             }
         }
+
+        // Function to draw the route and calculate distance using LocationIQ Directions API
+        async function drawRoute(lat1, lng1, lat2, lng2) {
+            const apiKey = "pk.c955796f3b0f6ba1fcdf78dc7d754395";
+
+            if (isNaN(lat1) || isNaN(lng1) || isNaN(lat2) || isNaN(lng2)) {
+                console.error("Invalid coordinates provided");
+                return null;
+            }
+            const url = `https://us1.locationiq.com/v1/directions/driving/${lng1},${lat1};${lng2},${lat2}?key=${apiKey}&overview=full&geometries=geojson`;
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    console.error("Error fetching data:", response.status, response.statusText);
+                    return null;
+                }
+                const data = await response.json();
+
+                if (data.routes && data.routes.length > 0) {
+                    const distanceInMeters = data.routes[0].distance;
+                    const distanceInKm = distanceInMeters / 1000;
+                    return distanceInKm;
+                } else {
+                    console.error("No valid routes found in API response.");
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error fetching route distance:", error);
+                return null;
+            }
+        }
     </script>
+
 @endsection
