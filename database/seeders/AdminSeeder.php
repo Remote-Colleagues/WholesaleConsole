@@ -33,6 +33,9 @@ class AdminSeeder extends Seeder
                 'privacy_policy_for_all' => 'privacy policy__',
                 'abn_number' => '123456',
                 'banking_detail' => 'NIC Asia',
+                'master_agreement_for_wconsoler' => 'This is the master agreement for WConsoler__',
+                'master_agreement_for_partners' => 'This is the master agreement for Partners__',
+                'bsb_number' => '987654',
             ]
         );
     }
