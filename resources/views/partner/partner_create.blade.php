@@ -165,7 +165,7 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-{{--@include('map')--}}
+@include('map2')
 <script>
     // Function to add new address fields
     document.getElementById('operation_locations_container').addEventListener('input', function(e) {
